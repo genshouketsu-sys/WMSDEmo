@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.wms</groupId>
-    <artifactId>wms-backend</artifactId>
+    <artifactId>SpeedWMS</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>wms-backend</name>
-    <description>wms-backend</description>
+    <name>SpeedWMS</name>
+    <description>SpeedWMS backend</description>
     <url/>
     <licenses>
         <license/>
