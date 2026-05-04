@@ -26,4 +26,9 @@ public class FinanceController {
         }
         return financeMapper.insert(bill);
     }
+
+    @DeleteMapping("/{id}")
+    public int delete(@PathVariable Long id) {
+        return financeMapper.deleteById(id);
+    }
 }

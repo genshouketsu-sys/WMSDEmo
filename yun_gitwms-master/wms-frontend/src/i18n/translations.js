@@ -177,7 +177,9 @@ export const translations = {
     abort: "Abort",
     initialize: "Initialize",
     recordTxn: "Record TXN",
-    amount: "Amount"
+    amount: "Amount",
+    delete: "Delete",
+    confirmDelete: "Are you sure you want to delete this record?"
   },
   zh: {
     // General
@@ -357,7 +359,9 @@ export const translations = {
     abort: "中止",
     initialize: "初始化",
     recordTxn: "录入交易",
-    amount: "金额"
+    amount: "金额",
+    delete: "删除",
+    confirmDelete: "您确定要删除此记录吗？"
   },
   ja: {
     // General
@@ -537,6 +541,8 @@ export const translations = {
     abort: "中止",
     initialize: "初期化",
     recordTxn: "取引を記録",
-    amount: "金額"
+    amount: "金額",
+    delete: "削除",
+    confirmDelete: "この記録を削除してもよろしいですか？"
   }
 };

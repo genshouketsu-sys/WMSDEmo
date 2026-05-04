@@ -18,4 +18,7 @@ public interface FinanceMapper {
 
     @Update("UPDATE finance_bill SET status = #{status} WHERE id = #{id}")
     int updateStatus(@Param("id") Long id, @Param("status") String status);
+
+    @Delete("DELETE FROM finance_bill WHERE id = #{id}")
+    int deleteById(Long id);
 }

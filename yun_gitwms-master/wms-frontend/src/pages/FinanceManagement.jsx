@@ -20,8 +20,20 @@ function FinanceManagement() {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm(t('confirmDelete') || "Delete this transaction?")) return;
+    try {
+      await axios.delete(`/api/finance/${id}`);
+      fetchBills();
+    } catch (error) {
+      alert("Failed to delete transaction");
+    }
+  };
+
   useEffect(() => {
     fetchBills();
+    const interval = setInterval(fetchBills, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleCreate = async (e) => {
@@ -106,9 +118,18 @@ function FinanceManagement() {
                     {bill.billType === 'Payable' ? '-' : '+'} ¥ {bill.amount.toLocaleString()}
                   </td>
                   <td className="px-8 py-5">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 border border-white/10 px-2 py-1 rounded-sm">
-                        {bill.status}
-                    </span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 border border-white/10 px-2 py-1 rounded-sm">
+                          {bill.status}
+                      </span>
+                      <button 
+                        onClick={() => handleDelete(bill.id)}
+                        className="text-zinc-600 hover:text-red-500 transition-colors p-1"
+                        title={t('delete')}
+                      >
+                        <span className="material-symbols-outlined text-sm">delete</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

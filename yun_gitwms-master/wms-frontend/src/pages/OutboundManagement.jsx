@@ -20,8 +20,20 @@ function OutboundManagement() {
     }
   };
 
+  const handleDelete = async (id) => {
+    if (!window.confirm(t('confirmDelete') || "Are you sure you want to delete this order?")) return;
+    try {
+      await axios.delete(`/api/outbound/${id}`);
+      fetchOrders();
+    } catch (error) {
+      alert("Failed to delete order");
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
+    const interval = setInterval(fetchOrders, 10000);
+    return () => clearInterval(interval);
   }, []);
 
   const handleCreate = async (e) => {
@@ -94,16 +106,25 @@ function OutboundManagement() {
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    {order.status === 'Pending' ? (
+                    <div className="flex items-center gap-4">
+                      {order.status === 'Pending' ? (
+                        <button 
+                          onClick={() => handleAudit(order.id)}
+                          className="text-[10px] font-black text-[#bcf540] hover:underline uppercase tracking-widest border border-[#bcf540]/30 px-3 py-1 rounded-sm hover:bg-[#bcf540]/10 transition-all"
+                        >
+                          {t('authorize')}
+                        </button>
+                      ) : (
+                          <span className="text-[10px] font-bold text-zinc-700 uppercase tracking-widest">DISPATCHED</span>
+                      )}
                       <button 
-                        onClick={() => handleAudit(order.id)}
-                        className="text-[10px] font-black text-[#bcf540] hover:underline uppercase tracking-widest border border-[#bcf540]/30 px-3 py-1 rounded-sm hover:bg-[#bcf540]/10 transition-all"
+                        onClick={() => handleDelete(order.id)}
+                        className="text-zinc-600 hover:text-red-500 transition-colors p-1"
+                        title={t('delete')}
                       >
-                        {t('authorize')}
+                        <span className="material-symbols-outlined text-sm">delete</span>
                       </button>
-                    ) : (
-                        <span className="text-[10px] font-bold text-zinc-700 uppercase tracking-widest">DISPATCHED</span>
-                    )}
+                    </div>
                   </td>
                 </tr>
               ))}
