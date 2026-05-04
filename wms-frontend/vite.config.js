@@ -1,19 +1,20 @@
-import { defineConfig } from 'vite';
-import react, { reactCompilerPreset } from '@vitejs/plugin-react';
-import babel from '@rolldown/plugin-babel';
-import os from 'os';
-import basicSsl from '@vitejs/plugin-basic-ssl';
+cat << 'EOF' > /Volumes/Lexar / wmsdemo / SpeedWMS / wms - frontend / vite.config.js
+import { defineConfig } from 'vite'
+import react, { reactCompilerPreset } from '@vitejs/plugin-react'
+import babel from '@rolldown/plugin-babel'
+import os from 'os'
+import basicSsl from '@vitejs/plugin-basic-ssl'
 
 function getLocalIP() {
-  const interfaces = os.networkInterfaces();
+  const interfaces = os.networkInterfaces()
   for (const name of Object.keys(interfaces)) {
     for (const iface of interfaces[name]) {
       if (iface.family === 'IPv4' && !iface.internal) {
-        return iface.address;
+        return iface.address
       }
     }
   }
-  return 'localhost';
+  return 'localhost'
 }
 
 export default defineConfig({
@@ -43,4 +44,5 @@ export default defineConfig({
       }
     }
   }
-});
+})
+EOF
