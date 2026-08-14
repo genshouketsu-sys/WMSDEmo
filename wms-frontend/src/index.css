@@ -1016,6 +1016,822 @@ textarea {
   }
 }
 
+/* --------------------------------------------------------------------------
+   Transparent glass material refinement
+   Visual-only layer for floating surfaces, cards and navigation.
+---------------------------------------------------------------------------- */
+:root {
+  --glass-fill: rgba(255, 255, 255, 0.15);
+  --glass-fill-soft: rgba(255, 255, 255, 0.1);
+  --glass-blur: blur(32px);
+  --glass-saturation: saturate(150%);
+}
+
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .dashboard-topbar [class*="bg-white/5"],
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.dashboard-app .dashboard-content,
+.dashboard-app .management-page,
+.dashboard-app .catalog-page,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.login-page .login-topbar,
+.login-page .login-card,
+.login-page .absolute.right-0.mt-2 {
+  -webkit-backdrop-filter: var(--glass-blur) var(--glass-saturation);
+  backdrop-filter: var(--glass-blur) var(--glass-saturation);
+}
+
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .dashboard-content,
+.dashboard-app .management-page,
+.dashboard-app .catalog-page,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.login-page .login-topbar,
+.login-page .login-card {
+  background: var(--glass-fill) !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.dashboard-app .metric-card--scans,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.login-page .absolute.right-0.mt-2 {
+  background: rgba(28, 52, 41, 0.58) !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.login-page .login-topbar,
+.login-page .login-card {
+  box-shadow:
+    0 22px 58px rgba(30, 52, 41, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+}
+
+.dashboard-app .health-panel > div > div,
+.dashboard-app .catalog-table-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .activity-panel table thead,
+.dashboard-app .catalog-table-panel table tbody tr,
+.dashboard-app .management-table-panel table tbody tr,
+.dashboard-app .activity-panel table tbody tr,
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea,
+.login-page .login-card input {
+  background: var(--glass-fill-soft) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+.dashboard-app > [class*="fixed"][class*="inset-0"],
+.login-page > [class*="fixed"][class*="inset-0"] {
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  backdrop-filter: blur(28px) saturate(150%);
+}
+
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div,
+.login-page > [class*="fixed"][class*="inset-0"] > div {
+  background: var(--glass-fill) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  backdrop-filter: blur(40px) saturate(150%);
+  box-shadow:
+    0 30px 84px rgba(24, 45, 35, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.38) !important;
+}
+
+.dashboard-app .restock-panel > div.absolute.inset-0 {
+  background: rgba(17, 37, 27, 0.34) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+}
+
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"],
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"] header {
+  background: rgba(28, 52, 41, 0.58) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(150%);
+  backdrop-filter: blur(28px) saturate(150%);
+}
+
+.dashboard-app [class*="backdrop-blur"],
+.login-page [class*="backdrop-blur"],
+div[class*="z-[100]"] [class*="backdrop-blur"] {
+  -webkit-backdrop-filter: blur(28px) saturate(150%) !important;
+  backdrop-filter: blur(28px) saturate(150%) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Directional glass edge highlights
+   Light comes from the upper-left; inset shadows preserve the existing layout.
+---------------------------------------------------------------------------- */
+:root {
+  --glass-edge-top: rgba(255, 255, 255, 0.62);
+  --glass-edge-left: rgba(255, 255, 255, 0.54);
+  --glass-edge-right: rgba(255, 255, 255, 0.2);
+  --glass-edge-bottom: rgba(255, 255, 255, 0.14);
+}
+
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .dashboard-topbar [class*="bg-white/5"],
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.login-page .login-topbar,
+.login-page .login-card,
+.login-page .absolute.right-0.mt-2 {
+  box-shadow:
+    inset 1px 0 0 var(--glass-edge-left),
+    inset 0 1px 0 var(--glass-edge-top),
+    inset -1px 0 0 var(--glass-edge-right),
+    inset 0 -1px 0 var(--glass-edge-bottom),
+    0 22px 58px rgba(30, 52, 41, 0.12) !important;
+}
+
+.dashboard-app .health-panel > div > div,
+.dashboard-app .catalog-table-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .activity-panel table thead,
+.dashboard-app .catalog-table-panel table tbody tr,
+.dashboard-app .management-table-panel table tbody tr,
+.dashboard-app .activity-panel table tbody tr,
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea,
+.login-page .login-card input,
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div,
+.login-page > [class*="fixed"][class*="inset-0"] > div {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+.dashboard-app .restock-panel > div.absolute.inset-0 {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.26),
+    inset 0 1px 0 rgba(255, 255, 255, 0.32),
+    inset -1px 0 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"],
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"] header {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44),
+    inset -1px 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Final ambient shadow pass. */
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .dashboard-topbar [class*="bg-white/5"],
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.login-page .login-topbar,
+.login-page .login-card,
+.login-page .absolute.right-0.mt-2 {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.54),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset -1px 0 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 2px 5px rgba(34, 58, 46, 0.07),
+    0 9px 20px rgba(34, 58, 46, 0.08),
+    0 24px 56px rgba(34, 58, 46, 0.1),
+    0 48px 104px rgba(38, 64, 51, 0.06) !important;
+}
+
+.dashboard-app .metric-card:hover,
+.dashboard-app .activity-panel:hover,
+.dashboard-app .catalog-toolbar:hover,
+.dashboard-app .catalog-table-panel:hover,
+.dashboard-app .management-table-panel:hover,
+.dashboard-app .health-panel:hover,
+.dashboard-app .restock-panel:hover {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    inset -1px 0 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+    0 3px 7px rgba(34, 58, 46, 0.08),
+    0 12px 26px rgba(34, 58, 46, 0.09),
+    0 30px 68px rgba(34, 58, 46, 0.11),
+    0 58px 120px rgba(38, 64, 51, 0.055) !important;
+}
+
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.dashboard-app .metric-card--scans,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.login-page .absolute.right-0.mt-2 {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 5px rgba(10, 31, 20, 0.09),
+    0 10px 22px rgba(10, 31, 20, 0.11),
+    0 26px 58px rgba(17, 38, 27, 0.16),
+    0 52px 108px rgba(17, 38, 27, 0.07) !important;
+}
+
+.dashboard-app .health-panel > div > div,
+.dashboard-app .catalog-table-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .activity-panel table thead,
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea,
+.login-page .login-card input,
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div,
+.login-page > [class*="fixed"][class*="inset-0"] > div {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 3px rgba(34, 58, 46, 0.05),
+    0 6px 14px rgba(34, 58, 46, 0.06),
+    0 18px 38px rgba(38, 64, 51, 0.055) !important;
+}
+
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"],
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"] header {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44),
+    inset -1px 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 5px rgba(10, 31, 20, 0.08),
+    0 12px 28px rgba(10, 31, 20, 0.1),
+    0 30px 70px rgba(17, 38, 27, 0.12),
+    0 60px 124px rgba(17, 38, 27, 0.06) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Product-grade visual calibration
+   A restrained WMS surface: clear hierarchy, neutral work areas and one
+   operational accent. This is a visual-only layer; React behavior, routes,
+   data loading and component geometry remain unchanged.
+---------------------------------------------------------------------------- */
+:root {
+  --product-canvas: #e5ebe6;
+  --product-surface: #f7f9f7;
+  --product-surface-strong: #ffffff;
+  --product-surface-soft: #eef3ef;
+  --product-green: #234334;
+  --product-green-deep: #1b3328;
+  --product-accent: #8bdc14;
+  --product-ink: #1b2921;
+  --product-muted: #6f7b73;
+  --product-line: rgba(35, 67, 52, 0.14);
+  --product-shadow: 0 8px 24px rgba(31, 57, 43, 0.08), 0 1px 2px rgba(31, 57, 43, 0.05);
+}
+
+html,
+body {
+  background: var(--product-canvas) !important;
+  color: var(--product-ink) !important;
+}
+
+.dashboard-app {
+  background: var(--product-canvas) !important;
+  color: var(--product-ink) !important;
+}
+
+.dashboard-app::after,
+.dashboard-app > main::before {
+  display: none !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar {
+  background: var(--product-green) !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 16px 38px rgba(24, 46, 35, 0.16) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav button {
+  border-radius: 12px !important;
+  color: rgba(246, 249, 246, 0.62) !important;
+  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav button:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  transform: translateX(2px) !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav button[class*="bcf540"] {
+  background: rgba(139, 220, 20, 0.16) !important;
+  border-color: rgba(139, 220, 20, 0.34) !important;
+  color: var(--product-accent) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:last-child button {
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--product-accent) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:last-child button:hover {
+  background: rgba(139, 220, 20, 0.18) !important;
+  color: #ffffff !important;
+}
+
+.dashboard-app > main {
+  background: var(--product-surface) !important;
+  color: var(--product-ink) !important;
+  box-shadow: 0 18px 48px rgba(31, 57, 43, 0.1) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.dashboard-app .dashboard-topbar {
+  background: var(--product-surface) !important;
+  border-bottom: 1px solid var(--product-line) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child > span {
+  display: block !important;
+  color: var(--product-ink) !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child::after {
+  display: none !important;
+}
+
+.dashboard-app .dashboard-topbar [class*="bg-white/5"] {
+  background: var(--product-surface-strong) !important;
+  border-color: var(--product-line) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.dashboard-app .dashboard-topbar [class*="text-white"],
+.dashboard-app .dashboard-topbar [class*="text-zinc-300"],
+.dashboard-app .dashboard-topbar [class*="text-zinc-500"] {
+  color: var(--product-ink) !important;
+}
+
+.dashboard-app .dashboard-content,
+.dashboard-app .management-page,
+.dashboard-app .catalog-page {
+  background: transparent !important;
+  color: var(--product-ink) !important;
+}
+
+.dashboard-app .dashboard-content h1,
+.dashboard-app .management-page h1,
+.dashboard-app .catalog-page h1 {
+  color: var(--product-ink) !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.055em !important;
+}
+
+.dashboard-app .dashboard-content h1::after,
+.dashboard-app .management-page h1::after,
+.dashboard-app .catalog-page h1::after,
+.dashboard-app .dashboard-hero-copy::before,
+.dashboard-app .management-header::before,
+.dashboard-app .catalog-header::before,
+.dashboard-app .restock-panel::before {
+  display: none !important;
+  content: none !important;
+}
+
+.dashboard-app .dashboard-hero {
+  border-bottom: 1px solid var(--product-line) !important;
+}
+
+.dashboard-app .dashboard-hero-copy {
+  background: var(--product-green) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 26px rgba(27, 51, 40, 0.13) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(125%) !important;
+  backdrop-filter: blur(20px) saturate(125%) !important;
+}
+
+.dashboard-app .dashboard-live-indicator {
+  border: 1px solid var(--product-line) !important;
+  background: var(--product-surface-strong) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-app .metric-card,
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .finance-stat-card {
+  border: 1px solid var(--product-line) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.78) !important;
+  box-shadow: var(--product-shadow) !important;
+  outline: none !important;
+  -webkit-backdrop-filter: blur(20px) saturate(125%) !important;
+  backdrop-filter: blur(20px) saturate(125%) !important;
+}
+
+.dashboard-app .metric-card:hover,
+.dashboard-app .activity-panel:hover,
+.dashboard-app .catalog-toolbar:hover,
+.dashboard-app .catalog-table-panel:hover,
+.dashboard-app .management-table-panel:hover,
+.dashboard-app .health-panel:hover,
+.dashboard-app .restock-panel:hover {
+  box-shadow: 0 12px 30px rgba(31, 57, 43, 0.11) !important;
+  filter: none !important;
+}
+
+.dashboard-app .metric-card::after {
+  display: none !important;
+}
+
+.dashboard-app .metric-card--scans {
+  background: var(--product-surface-soft) !important;
+  color: var(--product-ink) !important;
+}
+
+.dashboard-app .metric-card--scans h3,
+.dashboard-app .metric-card--scans p,
+.dashboard-app .metric-card--scans [class*="text-white"],
+.dashboard-app .metric-card--scans [class*="text-zinc-"] {
+  color: var(--product-ink) !important;
+}
+
+.dashboard-app .metric-card--alerts {
+  border-color: rgba(139, 220, 20, 0.32) !important;
+  background: #f3f8e9 !important;
+}
+
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 18px !important;
+  background: var(--product-green) !important;
+  box-shadow: 0 12px 30px rgba(27, 51, 40, 0.14) !important;
+  outline: none !important;
+  -webkit-backdrop-filter: blur(20px) saturate(125%) !important;
+  backdrop-filter: blur(20px) saturate(125%) !important;
+}
+
+.dashboard-app .health-panel > div > div {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-app .health-panel > div > div:hover {
+  background: rgba(255, 255, 255, 0.11) !important;
+}
+
+.dashboard-app .catalog-table-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .activity-panel table thead {
+  background: var(--product-surface-soft) !important;
+  color: var(--product-muted) !important;
+}
+
+.dashboard-app .catalog-table-panel table tbody tr,
+.dashboard-app .management-table-panel table tbody tr,
+.dashboard-app .activity-panel table tbody tr {
+  background: transparent !important;
+  border-color: var(--product-line) !important;
+}
+
+.dashboard-app .catalog-table-panel table tbody tr:hover,
+.dashboard-app .management-table-panel table tbody tr:hover,
+.dashboard-app .activity-panel table tbody tr:hover {
+  background: #f2f7ee !important;
+  transform: none !important;
+}
+
+.dashboard-app .catalog-toolbar input,
+.dashboard-app .management-page input,
+.dashboard-app .management-page select,
+.dashboard-app .catalog-page input,
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea {
+  border: 1px solid var(--product-line) !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.72) !important;
+  color: var(--product-ink) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+  backdrop-filter: blur(16px) saturate(120%) !important;
+}
+
+.dashboard-app .catalog-toolbar input:focus,
+.dashboard-app .management-page input:focus,
+.dashboard-app .management-page select:focus,
+.dashboard-app .catalog-page input:focus,
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]):focus,
+.dashboard-app select:focus,
+.dashboard-app textarea:focus {
+  border-color: rgba(92, 139, 27, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(139, 220, 20, 0.16) !important;
+}
+
+.dashboard-app .catalog-toolbar button,
+.dashboard-app .management-header button,
+.dashboard-app .catalog-header button,
+.dashboard-app .management-table-panel button,
+.dashboard-app .catalog-table-panel button,
+.dashboard-app .activity-panel button,
+.dashboard-app .restock-panel button {
+  border-radius: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.025em !important;
+  text-transform: none !important;
+}
+
+.dashboard-app button[class*="bg-[#bcf540]"],
+.dashboard-app button[class*="bg-[#c5ff4a]"],
+.login-page .login-card button[type="submit"] {
+  border: 1px solid rgba(255, 255, 255, 0.5) !important;
+  border-radius: 10px !important;
+  background: rgba(139, 220, 20, 0.74) !important;
+  color: #203326 !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.56),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    0 6px 16px rgba(73, 116, 18, 0.12) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(135%) !important;
+  backdrop-filter: blur(20px) saturate(135%) !important;
+  text-transform: none !important;
+}
+
+.dashboard-app button[class*="bg-[#bcf540"]:hover:not(:disabled),
+.dashboard-app button[class*="bg-[#c5ff4a"]:hover:not(:disabled),
+.login-page .login-card button[type="submit"]:hover:not(:disabled) {
+  background: rgba(158, 231, 47, 0.84) !important;
+  filter: none !important;
+}
+
+.dashboard-app button[class*="bg-[#bcf540"]:active:not(:disabled),
+.dashboard-app button[class*="bg-[#c5ff4a"]:active:not(:disabled),
+.login-page .login-card button[type="submit"]:active:not(:disabled) {
+  background: rgba(119, 196, 19, 0.68) !important;
+}
+
+.dashboard-app [class*="backdrop-blur"],
+.login-page [class*="backdrop-blur"] {
+  -webkit-backdrop-filter: blur(22px) saturate(125%) !important;
+  backdrop-filter: blur(22px) saturate(125%) !important;
+}
+
+.dashboard-app > [class*="fixed"][class*="inset-0"] {
+  background: rgba(24, 45, 35, 0.34) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(115%) !important;
+  backdrop-filter: blur(18px) saturate(115%) !important;
+}
+
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div {
+  border: 1px solid var(--product-line) !important;
+  border-radius: 18px !important;
+  background: rgba(247, 249, 247, 0.94) !important;
+  color: var(--product-ink) !important;
+  box-shadow: 0 22px 56px rgba(27, 51, 40, 0.18) !important;
+}
+
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div [class*="text-white"] {
+  color: var(--product-ink) !important;
+}
+
+.login-page {
+  background: #132019 !important;
+}
+
+.login-page canvas {
+  opacity: 0.34 !important;
+  filter: grayscale(0.2) saturate(0.72) contrast(0.98) !important;
+}
+
+.login-page .login-topbar {
+  background: rgba(19, 32, 25, 0.78) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: blur(20px) saturate(120%) !important;
+  backdrop-filter: blur(20px) saturate(120%) !important;
+}
+
+.login-page .login-card {
+  border: 1px solid rgba(255, 255, 255, 0.56) !important;
+  border-radius: 18px !important;
+  background: rgba(247, 249, 247, 0.92) !important;
+  box-shadow: 0 22px 58px rgba(8, 20, 14, 0.22) !important;
+  -webkit-backdrop-filter: blur(22px) saturate(120%) !important;
+  backdrop-filter: blur(22px) saturate(120%) !important;
+}
+
+.login-page .login-card h1 {
+  color: var(--product-green) !important;
+  font-family: 'Inter', sans-serif !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.06em !important;
+}
+
+.login-page .login-card p,
+.login-page .login-card label {
+  color: var(--product-muted) !important;
+}
+
+.login-page .login-card input {
+  border-bottom-color: var(--product-line) !important;
+  color: var(--product-ink) !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+}
+
+.login-page .login-card button[type="submit"] {
+  min-height: 48px;
+  background: rgba(139, 220, 20, 0.74) !important;
+  color: #203326 !important;
+}
+
+.login-page .login-card button[type="submit"]:hover {
+  background: rgba(158, 231, 47, 0.84) !important;
+  box-shadow: 0 8px 20px rgba(73, 116, 18, 0.14) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-app button,
+  .dashboard-app a,
+  .dashboard-app [class*="cursor-pointer"] {
+    transform: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Ambient depth shadows
+   Layered green-gray shadows replace hard, single-plane black shadows.
+---------------------------------------------------------------------------- */
+:root {
+  --ambient-shadow: rgba(34, 58, 46, 0.1);
+  --ambient-shadow-soft: rgba(38, 64, 51, 0.06);
+  --ambient-shadow-dark: rgba(17, 38, 27, 0.16);
+}
+
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .dashboard-topbar [class*="bg-white/5"],
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.login-page .login-topbar,
+.login-page .login-card,
+.login-page .absolute.right-0.mt-2 {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.54),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset -1px 0 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 2px 5px rgba(34, 58, 46, 0.07),
+    0 9px 20px rgba(34, 58, 46, 0.08),
+    0 24px 56px var(--ambient-shadow),
+    0 48px 104px var(--ambient-shadow-soft) !important;
+}
+
+.dashboard-app .metric-card:hover,
+.dashboard-app .activity-panel:hover,
+.dashboard-app .catalog-toolbar:hover,
+.dashboard-app .catalog-table-panel:hover,
+.dashboard-app .management-table-panel:hover,
+.dashboard-app .health-panel:hover,
+.dashboard-app .restock-panel:hover {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    inset -1px 0 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+    0 3px 7px rgba(34, 58, 46, 0.08),
+    0 12px 26px rgba(34, 58, 46, 0.09),
+    0 30px 68px rgba(34, 58, 46, 0.11),
+    0 58px 120px rgba(38, 64, 51, 0.055) !important;
+}
+
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.dashboard-app .metric-card--scans,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.login-page .absolute.right-0.mt-2 {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 5px rgba(10, 31, 20, 0.09),
+    0 10px 22px rgba(10, 31, 20, 0.11),
+    0 26px 58px var(--ambient-shadow-dark),
+    0 52px 108px rgba(17, 38, 27, 0.07) !important;
+}
+
+.dashboard-app .health-panel > div > div,
+.dashboard-app .catalog-table-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .activity-panel table thead,
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea,
+.login-page .login-card input,
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div,
+.login-page > [class*="fixed"][class*="inset-0"] > div {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 3px rgba(34, 58, 46, 0.05),
+    0 6px 14px rgba(34, 58, 46, 0.06),
+    0 18px 38px rgba(38, 64, 51, 0.055) !important;
+}
+
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"],
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"] header {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44),
+    inset -1px 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 5px rgba(10, 31, 20, 0.08),
+    0 12px 28px rgba(10, 31, 20, 0.1),
+    0 30px 70px rgba(17, 38, 27, 0.12),
+    0 60px 124px rgba(17, 38, 27, 0.06) !important;
+}
+
 @media (max-width: 640px) {
   .dashboard-app .dashboard-hero,
   .dashboard-app .catalog-header,
@@ -1422,7 +2238,7 @@ body {
   height: 34px !important;
   border: 0 !important;
   border-radius: 0;
-  background: linear-gradient(145deg, transparent 48%, rgba(139, 220, 20, 0.86) 49% 51%, transparent 52%), linear-gradient(35deg, transparent 45%, rgba(139, 220, 20, 0.4) 46% 48%, transparent 49%);
+  background: none;
   opacity: 0.7;
 }
 
@@ -2244,4 +3060,450 @@ body {
 
 div[class*="z-[100]"][class*="bg-[#0a0a0a]"] {
   background: linear-gradient(145deg, rgba(27, 49, 39, 0.94), rgba(10, 22, 16, 0.9)) !important;
+}
+
+/* --------------------------------------------------------------------------
+   Fluid physical interaction layer
+   Transforms do not affect document flow, so the existing layout stays fixed.
+---------------------------------------------------------------------------- */
+:root {
+  --ui-spring: cubic-bezier(0.22, 1.18, 0.36, 1);
+  --ui-press: cubic-bezier(0.32, 0, 0.67, 0);
+}
+
+.dashboard-app button:not(:disabled),
+.login-page button:not(:disabled),
+.dashboard-app a,
+.login-page a,
+.dashboard-app [role="button"],
+.login-page [role="button"],
+.dashboard-app [class*="cursor-pointer"],
+.login-page [class*="cursor-pointer"] {
+  transform-origin: center;
+  will-change: transform;
+  transition:
+    transform 280ms var(--ui-spring),
+    filter 280ms var(--ui-spring),
+    opacity 220ms ease,
+    box-shadow 280ms var(--ui-spring),
+    background-color 280ms var(--ui-spring),
+    border-color 280ms var(--ui-spring) !important;
+}
+
+.dashboard-app button:hover:not(:disabled),
+.login-page button:hover:not(:disabled),
+.dashboard-app a:hover,
+.login-page a:hover,
+.dashboard-app [role="button"]:hover,
+.login-page [role="button"]:hover,
+.dashboard-app [class*="cursor-pointer"]:hover,
+.login-page [class*="cursor-pointer"]:hover {
+  transform: translateY(-1px) scale(1.018);
+  filter: brightness(1.045) saturate(1.04);
+}
+
+.dashboard-app button:active:not(:disabled),
+.login-page button:active:not(:disabled),
+.dashboard-app a:active,
+.login-page a:active,
+.dashboard-app [role="button"]:active,
+.login-page [role="button"]:active,
+.dashboard-app [class*="cursor-pointer"]:active,
+.login-page [class*="cursor-pointer"]:active {
+  transform: translateY(1px) scale(0.968);
+  filter: brightness(0.96) saturate(0.98);
+  opacity: 0.92;
+  transition-duration: 120ms !important;
+  transition-timing-function: var(--ui-press) !important;
+}
+
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea,
+.login-page input {
+  transform-origin: center;
+  transition:
+    transform 260ms var(--ui-spring),
+    box-shadow 260ms var(--ui-spring),
+    border-color 220ms ease,
+    background-color 220ms ease !important;
+}
+
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]):hover,
+.dashboard-app select:hover,
+.dashboard-app textarea:hover,
+.login-page input:hover {
+  transform: translateY(-1px) scale(1.006);
+}
+
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]):focus,
+.dashboard-app select:focus,
+.dashboard-app textarea:focus,
+.login-page input:focus {
+  transform: translateY(-1px) scale(1.01);
+}
+
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel {
+  transform-origin: center;
+  transition:
+    transform 320ms var(--ui-spring),
+    box-shadow 320ms var(--ui-spring),
+    filter 320ms var(--ui-spring) !important;
+}
+
+.dashboard-app .metric-card:hover,
+.dashboard-app .activity-panel:hover,
+.dashboard-app .catalog-toolbar:hover,
+.dashboard-app .catalog-table-panel:hover,
+.dashboard-app .management-table-panel:hover,
+.dashboard-app .health-panel:hover,
+.dashboard-app .restock-panel:hover {
+  transform: translateY(-2px) scale(1.004);
+  filter: saturate(1.035);
+}
+
+.dashboard-app .metric-card:active,
+.dashboard-app .activity-panel:active,
+.dashboard-app .catalog-toolbar:active,
+.dashboard-app .catalog-table-panel:active,
+.dashboard-app .management-table-panel:active,
+.dashboard-app .health-panel:active,
+.dashboard-app .restock-panel:active {
+  transform: translateY(0) scale(0.998);
+  transition-duration: 120ms !important;
+  transition-timing-function: var(--ui-press) !important;
+}
+
+.dashboard-app .catalog-table-panel table tbody tr,
+.dashboard-app .management-table-panel table tbody tr,
+.dashboard-app .activity-panel table tbody tr {
+  transform-origin: center;
+  transition:
+    transform 220ms var(--ui-spring),
+    background-color 220ms ease,
+    box-shadow 220ms var(--ui-spring) !important;
+}
+
+.dashboard-app .catalog-table-panel table tbody tr:hover,
+.dashboard-app .management-table-panel table tbody tr:hover,
+.dashboard-app .activity-panel table tbody tr:hover {
+  transform: scale(1.002);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.52), inset 0 -1px 0 rgba(255, 255, 255, 0.34);
+}
+
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child:hover {
+  transform: translateY(-1px) scale(1.012);
+}
+
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child:active {
+  transform: translateY(1px) scale(0.975);
+  transition-duration: 120ms !important;
+}
+
+.dashboard-app button:focus-visible,
+.login-page button:focus-visible,
+.dashboard-app a:focus-visible,
+.login-page a:focus-visible,
+.dashboard-app [role="button"]:focus-visible,
+.login-page [role="button"]:focus-visible,
+.dashboard-app [class*="cursor-pointer"]:focus-visible,
+.login-page [class*="cursor-pointer"]:focus-visible {
+  outline: 2px solid rgba(139, 220, 20, 0.72);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-app button,
+  .login-page button,
+  .dashboard-app a,
+  .login-page a,
+  .dashboard-app [role="button"],
+  .login-page [role="button"],
+  .dashboard-app [class*="cursor-pointer"],
+  .login-page [class*="cursor-pointer"],
+  .dashboard-app input,
+  .dashboard-app select,
+  .dashboard-app textarea,
+  .login-page input,
+  .dashboard-app .metric-card,
+  .dashboard-app .activity-panel,
+  .dashboard-app .catalog-toolbar,
+  .dashboard-app .catalog-table-panel,
+  .dashboard-app .management-table-panel,
+  .dashboard-app .health-panel,
+  .dashboard-app .restock-panel,
+  .dashboard-app table tbody tr {
+    transition-duration: 1ms !important;
+  }
+}
+
+/* Final directional edge-light pass. */
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .dashboard-topbar [class*="bg-white/5"],
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.login-page .login-topbar,
+.login-page .login-card,
+.login-page .absolute.right-0.mt-2 {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.54),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset -1px 0 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 22px 58px rgba(30, 52, 41, 0.12) !important;
+}
+
+.dashboard-app .health-panel > div > div,
+.dashboard-app .catalog-table-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .activity-panel table thead,
+.dashboard-app .catalog-table-panel table tbody tr,
+.dashboard-app .management-table-panel table tbody tr,
+.dashboard-app .activity-panel table tbody tr,
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea,
+.login-page .login-card input,
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div,
+.login-page > [class*="fixed"][class*="inset-0"] > div {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"],
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"] header {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44),
+    inset -1px 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Final ambient depth pass. */
+/* Final product-level visual polish. */
+:root {
+  --ui-ink-strong: #18251e;
+  --ui-ink-soft: rgba(24, 37, 30, 0.64);
+  --ui-focus: rgba(139, 220, 20, 0.58);
+  --ui-surface-line: rgba(255, 255, 255, 0.42);
+}
+
+.dashboard-app,
+.login-page {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+}
+
+.dashboard-app h1,
+.dashboard-app h2,
+.dashboard-app h3,
+.dashboard-app h4,
+.login-page h1,
+.login-page h2,
+.login-page h3,
+.login-page h4 {
+  text-wrap: balance;
+  font-kerning: normal;
+}
+
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.login-page .login-topbar,
+.login-page .login-card {
+  outline: 1px solid var(--ui-surface-line);
+  outline-offset: -1px;
+}
+
+.dashboard-app button:focus-visible,
+.dashboard-app input:focus-visible,
+.dashboard-app select:focus-visible,
+.dashboard-app textarea:focus-visible,
+.login-page button:focus-visible,
+.login-page input:focus-visible,
+.login-page select:focus-visible,
+.login-page textarea:focus-visible {
+  outline: 2px solid var(--ui-focus) !important;
+  outline-offset: 3px;
+}
+
+.dashboard-app button:disabled,
+.login-page button:disabled {
+  cursor: not-allowed;
+  filter: saturate(0.65);
+  opacity: 0.52;
+}
+
+.dashboard-app .dashboard-topbar,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .management-header,
+.dashboard-app .catalog-header {
+  isolation: isolate;
+}
+
+.dashboard-app .catalog-header > button {
+  background: linear-gradient(135deg, rgba(213, 255, 128, 0.58), rgba(139, 220, 20, 0.42)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(150%) !important;
+  backdrop-filter: blur(24px) saturate(150%) !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    inset -1px 0 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 8px 22px rgba(91, 141, 24, 0.14) !important;
+}
+
+/* Refined translucent treatment for all green primary actions. */
+.dashboard-app button[class*="bg-[#bcf540]"]:not([class*="hover:bg-[#bcf540]"]),
+.dashboard-app button[class*="bg-[#c5ff4a]"]:not([class*="hover:bg-[#c5ff4a]"]),
+.login-page .login-card button[type="submit"],
+div[class*="z-[100]"] button[class*="bg-[#bcf540]"] {
+  background: linear-gradient(135deg, rgba(216, 255, 142, 0.56), rgba(139, 220, 20, 0.3)) !important;
+  color: #253c30 !important;
+  -webkit-backdrop-filter: blur(28px) saturate(160%) !important;
+  backdrop-filter: blur(28px) saturate(160%) !important;
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.66),
+    inset 0 1px 0 rgba(255, 255, 255, 0.76),
+    inset -1px 0 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 6px 18px rgba(92, 148, 20, 0.14) !important;
+}
+
+.dashboard-app button[class*="bg-[#bcf540"]:hover:not(:disabled),
+.dashboard-app button[class*="bg-[#c5ff4a"]:hover:not(:disabled),
+.login-page .login-card button[type="submit"]:hover:not(:disabled),
+div[class*="z-[100]"] button[class*="bg-[#bcf540"]:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(225, 255, 164, 0.68), rgba(139, 220, 20, 0.4)) !important;
+}
+
+.dashboard-app button[class*="bg-[#bcf540"]:active:not(:disabled),
+.dashboard-app button[class*="bg-[#c5ff4a"]:active:not(:disabled),
+.login-page .login-card button[type="submit"]:active:not(:disabled),
+div[class*="z-[100]"] button[class*="bg-[#bcf540"]:active:not(:disabled) {
+  background: linear-gradient(135deg, rgba(190, 242, 110, 0.48), rgba(112, 190, 12, 0.26)) !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > main,
+.dashboard-app .dashboard-topbar,
+.dashboard-app .dashboard-topbar [class*="bg-white/5"],
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.login-page .login-topbar,
+.login-page .login-card,
+.login-page .absolute.right-0.mt-2 {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.54),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62),
+    inset -1px 0 0 rgba(255, 255, 255, 0.2),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.14),
+    0 2px 5px rgba(34, 58, 46, 0.07),
+    0 9px 20px rgba(34, 58, 46, 0.08),
+    0 24px 56px rgba(34, 58, 46, 0.1),
+    0 48px 104px rgba(38, 64, 51, 0.06) !important;
+}
+
+.dashboard-app .metric-card:hover,
+.dashboard-app .activity-panel:hover,
+.dashboard-app .catalog-toolbar:hover,
+.dashboard-app .catalog-table-panel:hover,
+.dashboard-app .management-table-panel:hover,
+.dashboard-app .health-panel:hover,
+.dashboard-app .restock-panel:hover {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.58),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    inset -1px 0 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15),
+    0 3px 7px rgba(34, 58, 46, 0.08),
+    0 12px 26px rgba(34, 58, 46, 0.09),
+    0 30px 68px rgba(34, 58, 46, 0.11),
+    0 58px 120px rgba(38, 64, 51, 0.055) !important;
+}
+
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.dashboard-app .metric-card--scans,
+.dashboard-app .dashboard-hero-copy,
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2,
+.login-page .absolute.right-0.mt-2 {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 5px rgba(10, 31, 20, 0.09),
+    0 10px 22px rgba(10, 31, 20, 0.11),
+    0 26px 58px rgba(17, 38, 27, 0.16),
+    0 52px 108px rgba(17, 38, 27, 0.07) !important;
+}
+
+.dashboard-app .health-panel > div > div,
+.dashboard-app .catalog-table-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .activity-panel table thead,
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea,
+.login-page .login-card input,
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div,
+.login-page > [class*="fixed"][class*="inset-0"] > div {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    inset -1px 0 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 1px 3px rgba(34, 58, 46, 0.05),
+    0 6px 14px rgba(34, 58, 46, 0.06),
+    0 18px 38px rgba(38, 64, 51, 0.055) !important;
+}
+
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"],
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"] header {
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.44),
+    inset -1px 0 0 rgba(255, 255, 255, 0.14),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+    0 2px 5px rgba(10, 31, 20, 0.08),
+    0 12px 28px rgba(10, 31, 20, 0.1),
+    0 30px 70px rgba(17, 38, 27, 0.12),
+    0 60px 124px rgba(17, 38, 27, 0.06) !important;
 }

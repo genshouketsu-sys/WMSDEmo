@@ -626,7 +626,11 @@ function PcDashboard({
             
             <div className="h-6 w-[1px] bg-white/10"></div>
             
-            <div className="relative">
+            <div
+              className="relative"
+              onMouseEnter={() => setShowUserMenu(true)}
+              onMouseLeave={() => setShowUserMenu(false)}
+            >
               <div 
                 className="flex items-center gap-3 cursor-pointer hover:bg-white/5 px-3 h-10 rounded-xl transition-all border border-transparent hover:border-white/10"
                 onClick={() => setShowUserMenu(!showUserMenu)}
