@@ -37,7 +37,7 @@ function ProductCatalog() {
       const data = response.data;
       const backendData = (Array.isArray(data) ? data : []).map(p => ({
         ...p,
-        category: 'General Category',
+        category: 'General',
         image: null
       }));
 
@@ -182,12 +182,12 @@ function ProductCatalog() {
   };
 
   return (
-    <div className="bg-transparent text-[#e2e2e2] w-full font-['Space_Grotesk'] relative min-h-[calc(100vh-64px)]">
+    <div className="catalog-page bg-transparent text-[#e2e2e2] w-full font-['Space_Grotesk'] relative min-h-[calc(100vh-64px)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+        <div className="catalog-header flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div>
             <h1 className="font-h1 text-h1 text-primary">{t('productCatalog')}</h1>
-            <p className="text-on-surface-variant font-body-lg mt-2">Manage your inventory products, SKUs, and stock levels.</p>
+            <p className="text-on-surface-variant font-body-lg mt-2">{t('catalogDescription')}</p>
           </div>
           <button 
             onClick={() => setIsAddModalOpen(true)}
@@ -197,7 +197,7 @@ function ProductCatalog() {
           </button>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-4 mb-6 shadow-sm">
+        <div className="catalog-toolbar bg-white/5 backdrop-blur-md rounded-xl border border-white/10 p-4 mb-6 shadow-sm">
           <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
             <div className="relative w-full sm:max-w-md">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -217,7 +217,7 @@ function ProductCatalog() {
                 className="flex items-center gap-2 px-4 h-[44px] border border-[#c5ff4a]/40 rounded-lg text-sm font-medium text-[#c5ff4a] hover:bg-[#c5ff4a]/10 transition-colors w-full sm:w-auto justify-center"
               >
                 <span className="material-symbols-outlined text-[18px]">barcode_scanner</span>
-                スキャン
+                {t('scan')}
               </button>
               <button 
                 onClick={() => setStockFilter(prev => prev === 'all' ? 'low' : 'all')}
@@ -237,7 +237,7 @@ function ProductCatalog() {
           </div>
         </div>
 
-        <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10 shadow-sm overflow-hidden">
+        <div className="catalog-table-panel bg-white/5 backdrop-blur-md rounded-xl border border-white/10 shadow-sm overflow-hidden">
           <div className="overflow-x-auto min-h-[680px]">
             <table className="min-w-full divide-y divide-white/5">
               <thead className="bg-[#0c0f0f]/50">
@@ -309,7 +309,7 @@ function ProductCatalog() {
                           </div>
                           <div className="ml-4 max-w-[240px]">
                             <div className="text-sm font-medium text-white break-words whitespace-normal leading-tight line-clamp-2">{product.name || '-'}</div>
-                            <div className="text-[10px] text-zinc-500 mt-1 uppercase tracking-wider">{product.category || 'General Category'}</div>
+                            <div className="text-[10px] text-zinc-500 mt-1 uppercase tracking-wider">{product.category || t('generalCategory')}</div>
                           </div>
                         </div>
                       </td>

@@ -153,9 +153,9 @@ function AdminSettingsModal({ isOpen, onClose }) {
             </div>
             <div className="flex-1 relative z-10">
               <div className="flex items-center gap-2 mb-1">
-                <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-black uppercase tracking-widest border border-red-500/10">Authorized Admin</span>
+                <span className="px-2 py-0.5 rounded bg-red-500/20 text-red-400 text-[9px] font-black uppercase tracking-widest border border-red-500/10">{t('administrator')}</span>
               </div>
-              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">Node ID: <span className="font-mono text-[#bcf540]">ND-01-A</span></p>
+              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">{t('userId')}: <span className="font-mono text-[#bcf540]">ND-01-A</span></p>
             </div>
           </div>
 
@@ -226,7 +226,7 @@ function AdminSettingsModal({ isOpen, onClose }) {
             <div className="pt-6 border-t border-white/5 flex items-center justify-between">
               <div>
                 <h3 className="text-xs font-bold text-white uppercase tracking-wider">{t('emailAlerts') || 'System Notifications'}</h3>
-                <p className="text-[10px] text-zinc-500 font-medium">Auto-dispatch alerts for low-stock thresholds</p>
+                <p className="text-[10px] text-zinc-500 font-medium">{t('stockAlertDescription')}</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input 
@@ -259,7 +259,7 @@ function AdminSettingsModal({ isOpen, onClose }) {
               ) : (
                 <span className="material-symbols-outlined text-[18px]">save_as</span>
               )}
-              {t('saveChanges') || 'Apply System Changes'}
+              {t('saveChanges') || 'Save Changes'}
             </button>
           </div>
         </div>
@@ -269,4 +269,3 @@ function AdminSettingsModal({ isOpen, onClose }) {
 }
 
 export default AdminSettingsModal;
-

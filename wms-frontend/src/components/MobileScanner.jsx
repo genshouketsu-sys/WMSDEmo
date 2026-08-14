@@ -111,7 +111,6 @@ function MobileScanner({ onClose }) {
   };
 
   const resumeScanner = () => {
-    setShowDuplicateModal(false);
     setScanResult(null);
     if (scannerRef.current) {
       scannerRef.current.resume();
@@ -124,7 +123,7 @@ function MobileScanner({ onClose }) {
       <header className="flex items-center justify-between px-6 py-5 bg-[#161818] border-b border-[#bcf540]/20">
         <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-[#bcf540]">bolt</span>
-            <h1 className="text-xl font-bold tracking-tight uppercase">Speed Scan</h1>
+            <h1 className="text-xl font-bold tracking-tight uppercase">{t('mobileScanner')}</h1>
         </div>
         <button onClick={onClose} className="p-2 bg-white/5 rounded-full"><span className="material-symbols-outlined">close</span></button>
       </header>
@@ -133,7 +132,7 @@ function MobileScanner({ onClose }) {
         {!isCameraActive ? (
           <button onClick={startScanner} className="w-64 h-64 rounded-full border-4 border-[#bcf540]/20 bg-[#161818] flex flex-col items-center justify-center gap-4 group">
             <span className="material-symbols-outlined text-6xl text-[#bcf540] group-hover:scale-110 transition-transform">rocket_launch</span>
-            <span className="font-black tracking-widest text-[#bcf540]">BOOST START</span>
+            <span className="font-black tracking-widest text-[#bcf540]">{t('boostStart')}</span>
           </button>
         ) : (
           <div className="w-full h-full relative">
@@ -150,17 +149,17 @@ function MobileScanner({ onClose }) {
                     )}
                 </div>
                 <p className="mt-8 text-[#bcf540] font-black text-xs tracking-[0.3em] uppercase opacity-80">
-                    {isPaused ? 'Scanner Paused' : 'Hardware Accelerated Mode'}
+                    {isPaused ? t('scannerPaused') : t('hardwareAcceleratedMode')}
                 </p>
             </div>
 
             {/* Control Panel */}
             <div className="absolute bottom-10 left-0 right-0 flex justify-center px-8 gap-4">
                 <button onClick={handleUndo} className={`flex-1 py-5 rounded-2xl font-black uppercase text-xs tracking-widest transition-all active:scale-95 border border-white/10 ${undoStatus === 'SUCCESS' ? 'bg-green-600' : 'bg-white/5 backdrop-blur-md'}`}>
-                    {undoStatus === 'SUCCESS' ? 'Undone' : 'Undo'}
+                    {undoStatus === 'SUCCESS' ? t('undone') : t('undo')}
                 </button>
                 <button onClick={togglePause} className={`flex-1 py-5 rounded-2xl font-black uppercase text-xs tracking-widest transition-all active:scale-95 border border-white/10 ${isPaused ? 'bg-[#bcf540] text-black' : 'bg-white/5 backdrop-blur-md text-[#bcf540]'}`}>
-                    {isPaused ? 'Resume' : 'Pause'}
+                    {isPaused ? t('resume') : t('pause')}
                 </button>
             </div>
 

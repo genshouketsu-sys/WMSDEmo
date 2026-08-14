@@ -15,6 +15,7 @@ const LoginPage = () => {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [showLangMenu, setShowLangMenu] = useState(false);
+  const [notice, setNotice] = useState(null);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -124,6 +125,12 @@ const LoginPage = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleResetForm = () => {
+    setFormData({ username: '', password: '' });
+    setError('');
+    setSuccess('');
+  };
+
   const handleAuth = async (e) => {
     e.preventDefault();
     setError('');
@@ -142,7 +149,7 @@ const LoginPage = () => {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Action failed. Please try again.');
+      setError(err.response?.data?.message || t('requestFailed'));
     } finally {
       setLoading(false);
     }
@@ -155,7 +162,7 @@ const LoginPage = () => {
   ];
 
   return (
-    <div className="relative w-full h-screen bg-[#121414] overflow-hidden">
+    <div className="login-page relative w-full h-screen bg-[#121414] overflow-hidden">
       <div ref={containerRef} className="absolute inset-0 z-0" />
       
       {/* Gradient Overlays */}
@@ -166,13 +173,20 @@ const LoginPage = () => {
       <div className="relative z-20 w-full h-full flex flex-col items-center justify-center pointer-events-none">
         
         {/* Top Bar */}
-        <header className="absolute top-0 left-0 w-full flex justify-between items-center px-10 py-6 bg-transparent backdrop-blur-sm border-b border-white/10 pointer-events-auto">
+        <header className="login-topbar absolute top-0 left-0 w-full flex justify-between items-center px-10 py-6 bg-transparent backdrop-blur-sm border-b border-white/10 pointer-events-auto">
           <div className="flex items-center gap-3">
             <span className="text-xl font-black tracking-widest text-white uppercase">{t('omniWMS')}</span>
-            <span className="text-[10px] px-2 py-0.5 border border-[#bcf540] text-[#bcf540] font-bold uppercase tracking-tighter">PREDICTIVE AI</span>
+            <span className="text-[10px] px-2 py-0.5 border border-[#bcf540] text-[#bcf540] font-bold uppercase tracking-tighter">{t('predictiveLogistics')}</span>
           </div>
           <div className="flex items-center gap-6 relative">
-            <span className="material-symbols-outlined text-white/60 hover:text-[#bcf540] transition-colors cursor-pointer">help_outline</span>
+            <button
+              type="button"
+              onClick={() => setNotice(t('helpText'))}
+              aria-label={t('helpText')}
+              className="material-symbols-outlined text-white/60 hover:text-[#bcf540] transition-colors"
+            >
+              help_outline
+            </button>
             <div className="relative">
               <span 
                 className="material-symbols-outlined text-white/60 hover:text-[#bcf540] transition-colors cursor-pointer"
@@ -204,8 +218,8 @@ const LoginPage = () => {
         </header>
 
         {/* Auth Card */}
-        <main className="w-full max-w-md px-6 pointer-events-auto mt-16">
-          <div className="backdrop-blur-xl bg-black/40 p-12 border border-white/10 rounded-sm shadow-2xl">
+        <main className="login-auth-shell w-full max-w-md px-6 pointer-events-auto mt-16">
+          <div className="login-card backdrop-blur-xl bg-black/40 p-12 border border-white/10 rounded-sm shadow-2xl">
             <div className="mb-12">
               <h1 className="font-h1 text-h1 text-white mb-4">{isRegisterMode ? t('register') : t('signIn')}</h1>
               <p className="font-body-lg text-on-surface-variant tracking-wide">
@@ -274,7 +288,7 @@ const LoginPage = () => {
               >
                 {isRegisterMode ? t('backToSignIn') : t('adminRegister')}
               </button>
-              <a className="hover:text-white transition-colors" href="#">{t('resetTerminal')}</a>
+              <button type="button" className="hover:text-white transition-colors" onClick={handleResetForm}>{t('resetTerminal')}</button>
             </div>
           </div>
           
@@ -288,14 +302,25 @@ const LoginPage = () => {
           </div>
         </main>
 
-        <footer className="absolute bottom-0 w-full flex flex-col items-center gap-4 pb-8 bg-transparent pointer-events-auto">
+        <footer className="login-footer absolute bottom-0 w-full flex flex-col items-center gap-4 pb-8 bg-transparent pointer-events-auto">
           <div className="flex gap-8">
-            <a className="text-[10px] tracking-[0.2em] text-white/30 hover:text-white transition-opacity uppercase font-bold" href="#">{t('privacyPolicy') || 'Privacy Policy'}</a>
-            <a className="text-[10px] tracking-[0.2em] text-white/30 hover:text-white transition-opacity uppercase font-bold" href="#">{t('termsOfService') || 'Terms of Service'}</a>
-            <a className="text-[10px] tracking-[0.2em] text-white/30 hover:text-white transition-opacity uppercase font-bold" href="#">{t('systemStatus') || 'System Status'}</a>
+            <button type="button" onClick={() => setNotice(t('privacyNotice'))} className="text-[10px] tracking-[0.2em] text-white/30 hover:text-white transition-opacity uppercase font-bold">{t('privacyPolicy') || 'Privacy Policy'}</button>
+            <button type="button" onClick={() => setNotice(t('termsNotice'))} className="text-[10px] tracking-[0.2em] text-white/30 hover:text-white transition-opacity uppercase font-bold">{t('termsOfService') || 'Terms of Service'}</button>
+            <button type="button" onClick={() => setNotice(t('systemStatusNotice'))} className="text-[10px] tracking-[0.2em] text-white/30 hover:text-white transition-opacity uppercase font-bold">{t('systemStatus') || 'System Status'}</button>
           </div>
           <p className="text-[10px] tracking-[0.2em] text-white/30 uppercase font-bold">© Genshougetsu. ALL RIGHTS RESERVED.</p>
         </footer>
+
+        {notice && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6 pointer-events-auto" onClick={() => setNotice(null)}>
+            <div className="w-full max-w-sm rounded-2xl bg-[#1e2020] border border-white/10 p-6 shadow-2xl" onClick={(e) => e.stopPropagation()}>
+              <p className="text-sm leading-6 text-zinc-300">{notice}</p>
+              <button type="button" onClick={() => setNotice(null)} className="mt-5 w-full rounded-xl bg-[#bcf540] py-3 text-xs font-black uppercase tracking-widest text-black hover:brightness-110 transition-all">
+                {t('close')}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

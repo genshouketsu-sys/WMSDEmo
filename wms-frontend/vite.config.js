@@ -1,4 +1,3 @@
-cat << 'EOF' > /Volumes/Lexar / wmsdemo / SpeedWMS / wms - frontend / vite.config.js
 import { defineConfig } from 'vite'
 import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
@@ -32,12 +31,12 @@ export default defineConfig({
     https: true,
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8081',
         changeOrigin: true,
         secure: false
       },
       '/ws': {
-        target: 'ws://localhost:8080',
+        target: 'ws://localhost:8081',
         ws: true,
         changeOrigin: true,
         secure: false
@@ -45,4 +44,3 @@ export default defineConfig({
     }
   }
 })
-EOF

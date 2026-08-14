@@ -136,6 +136,22 @@ function App() {
           } 
         />
 
+        {/* Product Catalog Route */}
+        <Route 
+          path="/catalog" 
+          element={
+            <ProtectedRoute>
+              <PcDashboard 
+                currentView="catalog"
+                setCurrentView={setCurrentView}
+                scans={[]}
+                setScans={() => {}}
+                connectionStatus="ACTIVE"
+              />
+            </ProtectedRoute>
+          } 
+        />
+
         {/* Mobile Scanner Route (Can be accessed directly or protected) */}
         <Route 
           path="/scanner" 
@@ -149,7 +165,7 @@ function App() {
             <ProtectedRoute>
               <PcDashboard 
                 currentView="outbound"
-                setCurrentView={() => {}}
+                setCurrentView={setCurrentView}
                 scans={[]}
                 setScans={() => {}}
                 connectionStatus="ACTIVE"
@@ -165,7 +181,7 @@ function App() {
             <ProtectedRoute>
               <PcDashboard 
                 currentView="finance"
-                setCurrentView={() => {}}
+                setCurrentView={setCurrentView}
                 scans={[]}
                 setScans={() => {}}
                 connectionStatus="ACTIVE"
@@ -181,7 +197,7 @@ function App() {
             <ProtectedRoute>
               <PcDashboard 
                 currentView="inbound"
-                setCurrentView={() => {}}
+                setCurrentView={setCurrentView}
                 scans={[]}
                 setScans={() => {}}
                 connectionStatus="ACTIVE"

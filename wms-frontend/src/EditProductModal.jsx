@@ -124,7 +124,7 @@ function EditProductModal({ isOpen, onClose, onEdit, initialData }) {
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="dailyUsage" className="block text-[10px] font-black uppercase tracking-widest text-zinc-500">Usage/Day</label>
+              <label htmlFor="dailyUsage" className="block text-[10px] font-black uppercase tracking-widest text-zinc-500">{t('dailyUsage')}</label>
               <input 
                 type="number" 
                 id="dailyUsage" 
@@ -138,7 +138,7 @@ function EditProductModal({ isOpen, onClose, onEdit, initialData }) {
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="leadTimeDays" className="block text-[10px] font-black uppercase tracking-widest text-zinc-500">Lead(d)</label>
+              <label htmlFor="leadTimeDays" className="block text-[10px] font-black uppercase tracking-widest text-zinc-500">{t('leadTimeDays')}</label>
               <input 
                 type="number" 
                 id="leadTimeDays" 
@@ -151,7 +151,7 @@ function EditProductModal({ isOpen, onClose, onEdit, initialData }) {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="safetyStock" className="block text-[10px] font-black uppercase tracking-widest text-zinc-500">Safety</label>
+              <label htmlFor="safetyStock" className="block text-[10px] font-black uppercase tracking-widest text-zinc-500">{t('safetyStock')}</label>
               <input 
                 type="number" 
                 id="safetyStock" 

@@ -18,6 +18,17 @@ function PcDashboard({
 }) {
   const { t, language, setLanguage } = useTranslation();
   const navigate = useNavigate();
+  const handleViewChange = (view) => {
+    setCurrentView(view);
+    const routes = {
+      dashboard: '/',
+      catalog: '/catalog',
+      inbound: '/inbound',
+      outbound: '/outbound',
+      finance: '/finance'
+    };
+    navigate(routes[view] || '/');
+  };
   const [userProfile, setUserProfile] = useState({
     username: localStorage.getItem('wms_username') || 'Admin',
     displayName: '',
@@ -80,7 +91,12 @@ function PcDashboard({
     try {
       const response = await axios.get('/api/dashboard/stats');
       if (response.data) {
-        setStats(response.data);
+        const data = response.data;
+        setStats({
+          totalActiveSKUs: Number.isFinite(Number(data.totalActiveSKUs)) ? Number(data.totalActiveSKUs) : 0,
+          scansToday: Number.isFinite(Number(data.scansToday)) ? Number(data.scansToday) : 0,
+          lowStockAlerts: Number.isFinite(Number(data.lowStockAlerts)) ? Number(data.lowStockAlerts) : 0
+        });
       }
     } catch (error) {
       console.error("Failed to fetch dashboard stats:", error);
@@ -222,12 +238,12 @@ function PcDashboard({
   const handleExecuteOrder = async (skuCode, quantity) => {
     try {
       // In a real app, this would hit an order execution endpoint
-      alert(`Predictive order of ${quantity} units for '${skuCode}' executed successfully!`);
+      alert(t('reorderCreated'));
       // Update UI optimistically or fetch again
       setPredictions(prev => prev.filter(p => p.skuCode !== skuCode));
     } catch (error) {
       console.error('Failed to execute order:', error);
-      alert('Failed to execute predictive order.');
+      alert(t('reorderFailed'));
     }
   };
 
@@ -250,15 +266,15 @@ function PcDashboard({
 
     // Dashboard View
     return (
-      <div className="p-margin max-w-7xl mx-auto space-y-lg">
+      <div className="dashboard-content p-margin max-w-7xl mx-auto space-y-lg">
         {/* Inventory Overview Header */}
-        <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-8">
-          <div className="space-y-2">
+        <section className="dashboard-hero flex flex-col md:flex-row md:items-end justify-between gap-4 mt-8">
+          <div className="dashboard-hero-copy space-y-2">
             <h1 className="font-h1 text-h1 text-primary">{t('inventoryOverview')}</h1>
             <p className="text-on-surface-variant font-body-lg">{t('overviewDesc')}</p>
           </div>
-          <div className="flex items-center gap-4 pb-2">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
+          <div className="dashboard-hero-meta flex items-center gap-4 pb-2">
+            <div className="dashboard-live-indicator flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 backdrop-blur-md border border-white/10">
               <div className={`w-2 h-2 rounded-full ${connectionStatus === 'ACTIVE' ? 'bg-[#c5ff4a] animate-pulse' : 'bg-zinc-500'}`}></div>
               <span className={`text-xs uppercase tracking-widest ${connectionStatus === 'ACTIVE' ? 'text-[#c5ff4a]' : 'text-zinc-500'}`}>
                 {t('liveSync')} {connectionStatus}
@@ -270,10 +286,10 @@ function PcDashboard({
         {/* Metric Cards (Bento Style) */}
         <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {/* Metric 1: Total SKUs */}
-          <div className="bg-white/5 backdrop-blur-md p-6 rounded-2xl space-y-4 border border-white/10 hover:border-[#bcf540]/30 transition-all group shadow-sm">
+          <div className="metric-card metric-card--sku bg-white/5 backdrop-blur-md p-6 rounded-2xl space-y-4 border border-white/10 hover:border-[#bcf540]/30 transition-all group shadow-sm">
             <div className="flex justify-between items-start">
               <span className="material-symbols-outlined text-zinc-500 group-hover:text-[#bcf540] transition-colors">category</span>
-              <span className="text-[#bcf540] font-black text-[9px] bg-[#bcf540]/10 px-2 py-1 rounded tracking-widest uppercase">Live Database</span>
+              <span className="text-[#bcf540] font-black text-[9px] bg-[#bcf540]/10 px-2 py-1 rounded tracking-widest uppercase">{t('inventorySource')}</span>
             </div>
             <div>
               <h3 className="font-label-sm text-zinc-500 uppercase tracking-[0.2em] mb-1">{t('totalActiveSKUs')}</h3>
@@ -282,21 +298,21 @@ function PcDashboard({
           </div>
           
           {/* Metric 2: Scans Today */}
-          <div className="bg-white/5 backdrop-blur-md p-6 rounded-2xl space-y-4 border border-white/10 hover:border-[#bcf540]/30 transition-all group shadow-sm">
+          <div className="metric-card metric-card--scans bg-white/5 backdrop-blur-md p-6 rounded-2xl space-y-4 border border-white/10 hover:border-[#bcf540]/30 transition-all group shadow-sm">
             <div className="flex justify-between items-start">
               <span className="material-symbols-outlined text-zinc-500 group-hover:text-[#bcf540] transition-colors">qr_code_scanner</span>
-              <span className="text-zinc-500 font-black text-[9px] bg-white/5 px-2 py-1 rounded tracking-widest uppercase">Daily Metrics</span>
+              <span className="text-zinc-500 font-black text-[9px] bg-white/5 px-2 py-1 rounded tracking-widest uppercase">{t('dailySummary')}</span>
             </div>
             <div>
               <h3 className="font-label-sm text-zinc-500 uppercase tracking-[0.2em] mb-1">{t('scansToday')}</h3>
-              <p className="font-h2 text-h2 text-primary">{stats.scansToday.toLocaleString()}</p>
+              <p className="metric-value font-h2 text-h2 text-primary">{stats.scansToday.toLocaleString()}</p>
             </div>
           </div>
           
           {/* Metric 3: Low Stock Alerts */}
           <div 
             onClick={() => predictions.length > 0 && setShowPredictionsModal(true)}
-            className={`bg-white/5 backdrop-blur-md p-6 rounded-2xl space-y-4 border transition-all group shadow-sm ${stats.lowStockAlerts > 0 ? 'border-red-500/30 hover:border-red-500 cursor-pointer' : 'border-white/10'}`}
+            className={`metric-card metric-card--alerts bg-white/5 backdrop-blur-md p-6 rounded-2xl space-y-4 border transition-all group shadow-sm ${stats.lowStockAlerts > 0 ? 'border-red-500/30 hover:border-red-500 cursor-pointer' : 'border-white/10'}`}
           >
             <div className="flex justify-between items-start">
               <span className={`material-symbols-outlined ${stats.lowStockAlerts > 0 ? 'text-red-500 animate-pulse' : 'text-zinc-500'}`}>warning</span>
@@ -312,11 +328,11 @@ function PcDashboard({
         {/* System Health & Activity */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-8 pb-12">
           {/* Activity Table (Left) */}
-          <div className="lg:col-span-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-sm">
+          <div className="activity-panel lg:col-span-8 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl overflow-hidden shadow-sm">
             <div className="px-5 py-4 border-b border-white/5 flex flex-row justify-between items-center gap-4 bg-[#0c0f0f]/50">
               <div className="flex items-center gap-3">
                 <h3 className="text-white text-sm font-bold tracking-tight">{t('recentScanningActivity')}</h3>
-                <span className="text-[#bcf540] text-[9px] font-black bg-[#bcf540]/10 px-2 py-0.5 rounded-full uppercase tracking-widest">{scans.filter(s => s.status !== 'Stocked').length} Pending</span>
+                <span className="text-[#bcf540] text-[9px] font-black bg-[#bcf540]/10 px-2 py-0.5 rounded-full uppercase tracking-widest">{scans.filter(s => s.status !== 'Stocked').length} {t('pending')}</span>
               </div>
               <div className="flex items-center gap-2">
                 <button 
@@ -393,7 +409,7 @@ function PcDashboard({
 
           {/* System Health (Right) */}
           <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-xl space-y-6">
+            <div className="health-panel bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-xl space-y-6">
               <h3 className="text-white text-xl font-medium">{t('systemHealth')}</h3>
               <div className="space-y-4">
                 {/* Relay Status */}
@@ -451,17 +467,22 @@ function PcDashboard({
             </div>
 
             {/* Quick Action Card */}
-            <div className="relative overflow-hidden group rounded-xl p-6 h-48 flex flex-col justify-end border border-white/10 cursor-pointer" onClick={() => setShowPredictionsModal(true)}>
+            <div className="restock-panel relative overflow-hidden group rounded-xl p-6 h-48 flex flex-col justify-end border border-white/10 cursor-pointer" onClick={() => setShowPredictionsModal(true)}>
               <img alt="abstract" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClDYoSRWhGyXZjaJjKtIhvqZyErwAgSQSTuIrk4wjPnvQTjli7GupF7BddMfOW6nv1kAwb_ynWDONUDcac5Q3UKcWKYG4M9BpO7QXjdSfI9kojWYYp_tfxCLfA0s6hvN-V8A_gWsmUyhxJwPn3OVpTjooUTVK5viLcd-dKxKLjMlkmdnfUHbI6O00cVAn186iQdG7asgA95l6SHyVTy1OPyA3jzkPaDIj3oikbHUR_dV8Mq8MqO_Av6BFbX5aHBDB31oieDQDL42nP" />
               <div className="absolute inset-0 bg-zinc-950/60 backdrop-blur-[2px]"></div>
               <div className="relative z-10 space-y-2">
                 <h4 className="text-white font-bold">{t('predictiveRestock')}</h4>
                 <p className="text-xs text-zinc-300">
                   {predictions.length > 0 
-                    ? `${predictions.length} items require your attention based on AI usage forecasting.` 
+                    ? `${predictions.length} ${t('itemsNeedReview')}` 
                     : t('predictiveDesc')}
                 </p>
                 <button 
+                  type="button"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    setShowPredictionsModal(true);
+                  }}
                   className="mt-2 text-xs font-bold text-[#c5ff4a] uppercase tracking-wider flex items-center gap-1 group/btn hover:text-white transition-colors"
                 >
                   {t('executeOrder')}
@@ -476,11 +497,11 @@ function PcDashboard({
   };
 
   return (
-    <>
+    <div className="dashboard-app">
       {/* SideNavBar */}
-      <aside className="fixed left-0 top-0 flex flex-col h-full z-40 bg-[#0c0f0f]/95 backdrop-blur-2xl w-64 border-r border-white/10 font-['Space_Grotesk'] antialiased">
+      <aside className="dashboard-sidebar fixed left-0 top-0 flex flex-col h-full z-40 bg-[#0c0f0f]/95 backdrop-blur-2xl w-64 border-r border-white/10 font-['Space_Grotesk'] antialiased">
         <div className="p-6">
-          <div className="flex items-center gap-3 mb-10 cursor-pointer" onClick={() => setCurrentView('dashboard')}>
+          <div className="brand-lockup flex items-center gap-3 mb-10 cursor-pointer" onClick={() => handleViewChange('dashboard')}>
             <div className="w-10 h-10 rounded-lg bg-[#bcf540] flex items-center justify-center shadow-[0_0_20px_rgba(188,245,64,0.2)]">
               <span className="material-symbols-outlined text-black font-variation-fill" style={{ fontVariationSettings: "'FILL' 1" }}>dataset</span>
             </div>
@@ -491,7 +512,9 @@ function PcDashboard({
           </div>
           <nav className="space-y-1.5">
             <button
-              onClick={() => setCurrentView('dashboard')}
+              onClick={() => handleViewChange('dashboard')}
+              title={t('dashboard')}
+              aria-label={t('dashboard')}
               className={`w-full h-[48px] flex items-center gap-3 px-4 rounded-xl transition-all duration-200 ${
                 currentView === 'dashboard' 
                   ? 'bg-[#bcf540]/10 text-[#bcf540] border border-[#bcf540]/20' 
@@ -502,7 +525,9 @@ function PcDashboard({
               <span className="font-bold text-sm">{t('dashboard')}</span>
             </button>
             <button
-              onClick={() => setCurrentView('catalog')}
+              onClick={() => handleViewChange('catalog')}
+              title={t('productCatalog')}
+              aria-label={t('productCatalog')}
               className={`w-full h-[48px] flex items-center gap-3 px-4 rounded-xl transition-all duration-200 ${
                 currentView === 'catalog' 
                   ? 'bg-[#bcf540]/10 text-[#bcf540] border border-[#bcf540]/20' 
@@ -513,7 +538,9 @@ function PcDashboard({
               <span className="font-bold text-sm">{t('productCatalog')}</span>
             </button>
             <button
-              onClick={() => setCurrentView('inbound')}
+              onClick={() => handleViewChange('inbound')}
+              title={t('inboundLogistics')}
+              aria-label={t('inboundLogistics')}
               className={`w-full h-[48px] flex items-center gap-3 px-4 rounded-xl transition-all duration-200 ${
                 currentView === 'inbound' 
                   ? 'bg-[#bcf540]/10 text-[#bcf540] border border-[#bcf540]/20' 
@@ -524,7 +551,9 @@ function PcDashboard({
               <span className="font-bold text-sm">{t('inboundLogistics')}</span>
             </button>
             <button
-              onClick={() => setCurrentView('outbound')}
+              onClick={() => handleViewChange('outbound')}
+              title={t('outboundLogistics')}
+              aria-label={t('outboundLogistics')}
               className={`w-full h-[48px] flex items-center gap-3 px-4 rounded-xl transition-all duration-200 ${
                 currentView === 'outbound' 
                   ? 'bg-[#bcf540]/10 text-[#bcf540] border border-[#bcf540]/20' 
@@ -535,7 +564,9 @@ function PcDashboard({
               <span className="font-bold text-sm">{t('outboundLogistics')}</span>
             </button>
             <button
-              onClick={() => setCurrentView('finance')}
+              onClick={() => handleViewChange('finance')}
+              title={t('financialLedger')}
+              aria-label={t('financialLedger')}
               className={`w-full h-[48px] flex items-center gap-3 px-4 rounded-xl transition-all duration-200 ${
                 currentView === 'finance' 
                   ? 'bg-[#bcf540]/10 text-[#bcf540] border border-[#bcf540]/20' 
@@ -550,6 +581,8 @@ function PcDashboard({
         <div className="mt-auto p-6">
           <button 
             onClick={() => setShowQr(true)}
+            title={t('newScan')}
+            aria-label={t('newScan')}
             className="w-full h-[48px] bg-[#bcf540] text-black rounded-xl font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:brightness-110 shadow-[0_4px_15px_rgba(188,245,64,0.2)] active:scale-[0.98] transition-all"
           >
             <span className="material-symbols-outlined text-sm font-bold">add</span>
@@ -568,9 +601,15 @@ function PcDashboard({
         }}></div>
 
         {/* TopAppBar */}
-        <header className="sticky top-0 z-30 flex justify-between items-center w-full px-8 h-[64px] bg-[#0c0f0f]/80 backdrop-blur-2xl border-b border-white/5">
+        <header className="dashboard-topbar sticky top-0 z-30 flex justify-between items-center w-full px-8 h-[64px] bg-[#0c0f0f]/80 backdrop-blur-2xl border-b border-white/5">
           <div className="flex items-center gap-4">
-            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">{currentView === 'dashboard' ? 'Overview' : 'Inventory Management'}</span>
+            <span className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em]">
+              {currentView === 'dashboard' ? t('dashboard') :
+                currentView === 'catalog' ? t('productCatalog') :
+                currentView === 'inbound' ? t('inboundLogistics') :
+                currentView === 'outbound' ? t('outboundLogistics') :
+                currentView === 'finance' ? t('financialLedger') : t('dashboard')}
+            </span>
           </div>
           <div className="flex items-center gap-6">
             <div className="flex bg-white/5 rounded-lg border border-white/10 p-0.5">
@@ -606,7 +645,7 @@ function PcDashboard({
               {showUserMenu && (
                 <div className="absolute right-0 mt-2 w-56 bg-[#161818] border border-white/10 rounded-2xl shadow-2xl py-2 z-50 animate-in fade-in slide-in-from-top-2">
                   <div className="px-4 py-2 border-b border-white/5 mb-2">
-                    <p className="text-[9px] text-zinc-500 uppercase font-black tracking-widest">User Profile</p>
+                    <p className="text-[9px] text-zinc-500 uppercase font-black tracking-widest">{t('userProfile')}</p>
                     <p className="text-xs text-white font-bold truncate">{userProfile.username}</p>
                   </div>
                   <button 
@@ -614,14 +653,14 @@ function PcDashboard({
                     className="w-full text-left px-4 py-2.5 text-xs text-zinc-300 hover:bg-[#bcf540]/10 hover:text-[#bcf540] transition-all flex items-center gap-3 group"
                   >
                     <span className="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">barcode_scanner</span>
-                    {t('openScanner') || 'Mobile Terminal'}
+                    {t('openScanner') || 'Scanner'}
                   </button>
                   <button 
                     onClick={() => { setShowAdminSettings(true); setShowUserMenu(false); }}
                     className="w-full text-left px-4 py-2.5 text-xs text-zinc-300 hover:bg-[#bcf540]/10 hover:text-[#bcf540] transition-all flex items-center gap-3 group"
                   >
                     <span className="material-symbols-outlined text-[18px] group-hover:scale-110 transition-transform">settings_suggest</span>
-                    {t('editAdmin') || 'System Settings'}
+                    {t('editAdmin') || 'Settings'}
                   </button>
                   <div className="h-px bg-white/10 my-2"></div>
                   <button 
@@ -701,23 +740,23 @@ function PcDashboard({
                         <p className="text-[10px] text-zinc-500 italic mt-1">{p.reason}</p>
                         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 mt-3 text-[11px] text-zinc-400">
                           <div className="flex flex-col">
-                            <span className="text-zinc-500 uppercase text-[9px] font-bold tracking-widest">Current</span>
+                            <span className="text-zinc-500 uppercase text-[9px] font-bold tracking-widest">{t('current')}</span>
                             <span className="text-white font-medium">{p.currentStock}</span>
                           </div>
                           <div className="flex flex-col">
-                            <span className="text-zinc-500 uppercase text-[9px] font-bold tracking-widest">Threshold</span>
+                            <span className="text-zinc-500 uppercase text-[9px] font-bold tracking-widest">{t('reorderPoint')}</span>
                             <span className="text-[#c5ff4a] font-medium">{p.reorderPoint || p.safetyStock}</span>
                           </div>
                           {p.daysUntilDepletion !== undefined && (
                             <div className="flex flex-col">
-                              <span className="text-zinc-500 uppercase text-[9px] font-bold tracking-widest">Est. Depletion</span>
-                              <span className={`font-bold ${p.daysUntilDepletion <= 3 ? 'text-red-400' : 'text-white'}`}>{p.daysUntilDepletion} days</span>
+                              <span className="text-zinc-500 uppercase text-[9px] font-bold tracking-widest">{t('estimatedDepletion')}</span>
+                              <span className={`font-bold ${p.daysUntilDepletion <= 3 ? 'text-red-400' : 'text-white'}`}>{p.daysUntilDepletion} {t('days')}</span>
                             </div>
                           )}
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-2">
-                        <div className="text-[10px] text-zinc-400">Suggested: <span className="text-white font-bold text-base">{p.suggestedOrderQuantity}</span> units</div>
+                        <div className="text-[10px] text-zinc-400">{t('suggestedQuantity')}: <span className="text-white font-bold text-base">{p.suggestedOrderQuantity}</span> {t('units')}</div>
                         <button 
                           onClick={() => handleExecuteOrder(p.skuCode, p.suggestedOrderQuantity)}
                           className="bg-[#c5ff4a] text-black px-4 py-2 rounded-lg text-sm font-bold hover:brightness-110 transition-all flex items-center gap-1 active:scale-95"
@@ -734,7 +773,7 @@ function PcDashboard({
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
+import { useTranslation } from './i18n/LanguageContext';
 
 function BarcodeLookupModal({ isOpen, onClose, onBarcodeFound }) {
+  const { t } = useTranslation();
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [manualInput, setManualInput] = useState('');
   const [lastScanned, setLastScanned] = useState(null);
@@ -70,7 +72,7 @@ function BarcodeLookupModal({ isOpen, onClose, onBarcodeFound }) {
             <div className="w-8 h-8 rounded-lg bg-[#bcf540]/10 flex items-center justify-center">
               <span className="material-symbols-outlined text-[#bcf540] text-[20px]">center_focus_strong</span>
             </div>
-            <h2 className="text-white font-bold text-lg tracking-tight">Precision Lookup</h2>
+            <h2 className="text-white font-bold text-lg tracking-tight">{t('barcodeLookup')}</h2>
           </div>
           <button onClick={() => { stopCamera(); onClose(); }} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/5 text-zinc-500 hover:text-white transition-all">
             <span className="material-symbols-outlined text-sm">close</span>
@@ -86,7 +88,7 @@ function BarcodeLookupModal({ isOpen, onClose, onBarcodeFound }) {
                     <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-[#bcf540] shadow-[0_0_15px_#bcf540]"></div>
                 </div>
             </div>
-            <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[9px] text-black font-black uppercase tracking-[0.2em] bg-[#bcf540] px-4 py-1.5 rounded-full shadow-lg">Scan zone active</p>
+            <p className="absolute bottom-4 left-1/2 -translate-x-1/2 text-[9px] text-black font-black uppercase tracking-[0.2em] bg-[#bcf540] px-4 py-1.5 rounded-full shadow-lg">{t('scanZoneActive')}</p>
           </div>
         ) : (
           <button 
@@ -96,7 +98,7 @@ function BarcodeLookupModal({ isOpen, onClose, onBarcodeFound }) {
             <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:scale-110 transition-transform">
               <span className="material-symbols-outlined text-3xl">filter_center_focus</span>
             </div>
-            <span className="font-bold text-xs uppercase tracking-widest">Activate Precision Sensor</span>
+            <span className="font-bold text-xs uppercase tracking-widest">{t('activatePrecisionSensor')}</span>
           </button>
         )}
 
@@ -106,12 +108,12 @@ function BarcodeLookupModal({ isOpen, onClose, onBarcodeFound }) {
           <input 
             ref={inputRef}
             className="flex-1 h-[44px] bg-zinc-950/50 border border-white/10 rounded-xl px-4 text-white placeholder:text-zinc-700 focus:outline-none focus:ring-2 focus:ring-[#bcf540]/50 focus:border-[#bcf540] transition-all text-sm font-medium" 
-            placeholder="Manual entry..."
+            placeholder={t('manualEntry')}
             value={manualInput}
             onChange={e => setManualInput(e.target.value)}
           />
           <button type="submit" className="h-[44px] bg-[#bcf540] text-black px-6 rounded-xl font-black text-xs uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-[#bcf540]/10 active:scale-[0.98]">
-            Find
+            {t('find')}
           </button>
         </form>
       </div>

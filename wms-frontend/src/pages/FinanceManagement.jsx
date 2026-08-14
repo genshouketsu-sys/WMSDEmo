@@ -55,8 +55,8 @@ function FinanceManagement() {
   }, { payable: 0, receivable: 0 });
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in slide-in-from-bottom-4 duration-500 font-['Space_Grotesk']">
-      <section className="flex flex-col md:flex-row md:items-end justify-between gap-4 mt-8">
+    <div className="management-page finance-page p-8 max-w-7xl mx-auto space-y-8 animate-in slide-in-from-bottom-4 duration-500 font-['Space_Grotesk']">
+      <section className="management-header flex flex-col md:flex-row md:items-end justify-between gap-4 mt-8">
         <div className="space-y-2">
           <h1 className="font-h1 text-h1 text-primary">{t('financialLedger')}</h1>
           <div className="flex items-center gap-2">
@@ -73,24 +73,24 @@ function FinanceManagement() {
       </section>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-surface-container-high border border-white/5 p-8 rounded-xl shadow-sm">
+        <div className="finance-stat-card bg-surface-container-high border border-white/5 p-8 rounded-xl shadow-sm">
           <p className="font-label-sm text-zinc-500 uppercase mb-4">{t('totalLiquidity')}</p>
           <h3 className="font-h2 text-h2 text-primary">¥ {(totals.receivable - totals.payable).toLocaleString()}</h3>
           <div className="mt-4 h-1 w-full bg-zinc-800 rounded-full overflow-hidden"><div className="h-full bg-[#bcf540]" style={{width: '65%'}}></div></div>
         </div>
-        <div className="bg-surface-container-high border border-white/5 p-8 rounded-xl shadow-sm">
+        <div className="finance-stat-card bg-surface-container-high border border-white/5 p-8 rounded-xl shadow-sm">
           <p className="font-label-sm text-zinc-500 uppercase mb-4">{t('accountReceivables')}</p>
           <h3 className="font-h2 text-h2 text-[#bcf540]">¥ {totals.receivable.toLocaleString()}</h3>
-          <p className="text-[10px] text-zinc-600 mt-2 font-bold uppercase tracking-widest">Pending Sync</p>
+          <p className="text-[10px] text-zinc-600 mt-2 font-bold uppercase tracking-widest">{t('awaitingUpdate')}</p>
         </div>
-        <div className="bg-surface-container-high border border-white/5 p-8 rounded-xl shadow-sm">
+        <div className="finance-stat-card bg-surface-container-high border border-white/5 p-8 rounded-xl shadow-sm">
           <p className="font-label-sm text-zinc-500 uppercase mb-4">{t('accountPayables')}</p>
           <h3 className="font-h2 text-h2 text-red-500">¥ {totals.payable.toLocaleString()}</h3>
-          <p className="text-[10px] text-zinc-600 mt-2 font-bold uppercase tracking-widest">Active Liabilities</p>
+          <p className="text-[10px] text-zinc-600 mt-2 font-bold uppercase tracking-widest">{t('outstandingPayables')}</p>
         </div>
       </div>
 
-      <div className="bg-white/5 backdrop-blur-md rounded-xl border border-white/10 shadow-sm overflow-hidden">
+      <div className="management-table-panel bg-white/5 backdrop-blur-md rounded-xl border border-white/10 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead className="bg-[#0c0f0f]/50 text-zinc-400 text-xs font-semibold uppercase tracking-wider">
@@ -110,17 +110,17 @@ function FinanceManagement() {
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                       bill.billType === 'Payable' ? 'text-red-500 border border-red-500/20' : 'text-[#bcf540] border border-[#bcf540]/20'
                     }`}>
-                      {bill.billType}
+                      {bill.billType === 'Payable' ? t('payable') : bill.billType === 'Receivable' ? t('receivable') : bill.billType}
                     </span>
                   </td>
-                  <td className="px-8 py-5 text-zinc-400 text-sm font-mono uppercase">{bill.relatedOrder || 'N/A'}</td>
+                  <td className="px-8 py-5 text-zinc-400 text-sm font-mono uppercase">{bill.relatedOrder || t('notAvailable')}</td>
                   <td className={`px-8 py-5 font-black text-sm ${bill.billType === 'Payable' ? 'text-red-500' : 'text-[#bcf540]'}`}>
                     {bill.billType === 'Payable' ? '-' : '+'} ¥ {bill.amount.toLocaleString()}
                   </td>
                   <td className="px-8 py-5">
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 border border-white/10 px-2 py-1 rounded-sm">
-                          {bill.status}
+                          {bill.status === 'Pending' ? t('pending') : bill.status === 'Completed' ? t('completed') : bill.status}
                       </span>
                       <button 
                         onClick={() => handleDelete(bill.id)}
@@ -134,7 +134,7 @@ function FinanceManagement() {
                 </tr>
               ))}
               {bills.length === 0 && !loading && (
-                <tr><td colSpan="5" className="px-8 py-20 text-center text-zinc-700 uppercase tracking-[0.5em] text-[10px] font-black">No Transactions Found</td></tr>
+                <tr><td colSpan="5" className="px-8 py-20 text-center text-zinc-700 uppercase tracking-[0.5em] text-[10px] font-black">{t('noTransactions')}</td></tr>
               )}
             </tbody>
           </table>
@@ -142,7 +142,7 @@ function FinanceManagement() {
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-md p-6">
+        <div className="management-modal fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-md p-6">
           <div className="w-full max-w-lg bg-[#121414] border border-[#bcf540]/30 p-10 rounded-sm shadow-[0_0_100px_rgba(0,0,0,0.5)]">
             <h2 className="font-h3 text-h3 text-white uppercase mb-8 flex items-center gap-3">
                 <span className="w-2 h-8 bg-[#bcf540]"></span>
@@ -167,8 +167,8 @@ function FinanceManagement() {
                         value={newBill.billType}
                         onChange={(e) => setNewBill({...newBill, billType: e.target.value})}
                     >
-                        <option value="Payable" className="bg-[#121414]">Payable</option>
-                        <option value="Receivable" className="bg-[#121414]">Receivable</option>
+                        <option value="Payable" className="bg-[#121414]">{t('payable')}</option>
+                        <option value="Receivable" className="bg-[#121414]">{t('receivable')}</option>
                     </select>
                 </div>
                 <div className="space-y-2">
@@ -187,7 +187,7 @@ function FinanceManagement() {
                 <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest">{t('protocolRef')}</label>
                 <input 
                   className="w-full bg-white/5 border-0 border-b-2 border-white/10 p-4 text-white focus:border-[#bcf540] outline-none transition-all font-mono"
-                  placeholder="PO/SO Reference"
+                  placeholder={t('relatedOrderPlaceholder')}
                   value={newBill.relatedOrder}
                   onChange={(e) => setNewBill({...newBill, relatedOrder: e.target.value})}
                 />

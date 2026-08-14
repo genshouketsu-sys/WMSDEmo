@@ -76,3 +76,2172 @@ input {
     appearance: none;
     box-shadow: none !important;
 }
+
+/* --------------------------------------------------------------------------
+   Noomo-inspired visual layer
+   The product behavior stays in the React components; this layer only
+   changes the visual system and interaction feedback.
+---------------------------------------------------------------------------- */
+:root {
+  --paper: #e9e6df;
+  --paper-bright: #f4f1eb;
+  --ink: #18171c;
+  --muted: #77727c;
+  --line: rgba(24, 23, 28, 0.14);
+  --acid: #c5ff4a;
+  --violet: #9d8cff;
+  --orange: #ff7955;
+  --panel: rgba(255, 255, 255, 0.56);
+  --shadow: 0 24px 70px rgba(28, 24, 34, 0.11);
+}
+
+html,
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* Dashboard shell */
+.dashboard-app {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at 72% -8%, rgba(157, 140, 255, 0.2), transparent 26rem),
+    radial-gradient(circle at 7% 82%, rgba(197, 255, 74, 0.12), transparent 24rem),
+    var(--paper);
+  color: var(--ink);
+}
+
+.dashboard-app::after {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  content: '';
+  opacity: 0.26;
+  background-image: radial-gradient(rgba(24, 23, 28, 0.22) 0.65px, transparent 0.65px);
+  background-size: 8px 8px;
+  mix-blend-mode: multiply;
+}
+
+.dashboard-app > aside {
+  z-index: 40;
+  width: 248px !important;
+  background: rgba(244, 241, 235, 0.8) !important;
+  border-right: 1px solid var(--line) !important;
+  box-shadow: 16px 0 50px rgba(28, 24, 34, 0.05);
+  color: var(--ink) !important;
+  backdrop-filter: blur(24px);
+}
+
+.dashboard-app > aside > div:first-child {
+  padding: 30px 22px !important;
+}
+
+.dashboard-app > aside > div:last-child {
+  padding: 22px !important;
+}
+
+.dashboard-app aside h2,
+.dashboard-app aside .text-white {
+  color: var(--ink) !important;
+}
+
+.dashboard-app aside h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.02rem;
+  letter-spacing: -0.06em;
+}
+
+.dashboard-app aside nav {
+  position: relative;
+}
+
+.dashboard-app aside nav::before {
+  position: absolute;
+  top: -18px;
+  left: 4px;
+  color: var(--muted);
+  content: 'CONTROL / 01';
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.dashboard-app aside nav button {
+  position: relative;
+  border: 1px solid transparent !important;
+  border-radius: 14px !important;
+  color: var(--muted) !important;
+  transition: transform 220ms ease, color 220ms ease, background 220ms ease, border-color 220ms ease;
+}
+
+.dashboard-app aside nav button:hover {
+  transform: translateX(4px);
+  background: rgba(24, 23, 28, 0.05) !important;
+  color: var(--ink) !important;
+}
+
+.dashboard-app aside nav button[class*="bcf540"] {
+  background: var(--ink) !important;
+  border-color: var(--ink) !important;
+  color: var(--acid) !important;
+  box-shadow: 0 12px 24px rgba(24, 23, 28, 0.13);
+}
+
+.dashboard-app aside nav button[class*="bcf540"]::after {
+  position: absolute;
+  right: 12px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--acid);
+  box-shadow: 0 0 14px var(--acid);
+  content: '';
+}
+
+.dashboard-app aside > div:last-child button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--ink) !important;
+  color: var(--paper-bright) !important;
+  box-shadow: 0 14px 28px rgba(24, 23, 28, 0.16) !important;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.dashboard-app aside > div:last-child button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 35px rgba(24, 23, 28, 0.22) !important;
+}
+
+.dashboard-app main {
+  position: relative;
+  z-index: 1;
+  margin-left: 248px !important;
+  background: transparent !important;
+  color: var(--ink) !important;
+}
+
+.dashboard-app main::before {
+  position: absolute;
+  top: 0;
+  right: 7vw;
+  width: min(38vw, 520px);
+  height: 520px;
+  z-index: -1;
+  pointer-events: none;
+  content: '';
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(157, 140, 255, 0.17), transparent 66%);
+  filter: blur(20px);
+}
+
+.dashboard-app main > header {
+  height: 86px !important;
+  padding: 0 clamp(24px, 4vw, 66px) !important;
+  background: rgba(233, 230, 223, 0.72) !important;
+  border-bottom: 1px solid var(--line) !important;
+  color: var(--ink) !important;
+  backdrop-filter: blur(20px);
+}
+
+.dashboard-app main > header [class*="text-white"],
+.dashboard-app main > header [class*="text-zinc-300"] {
+  color: var(--ink) !important;
+}
+
+.dashboard-app main > header [class*="text-zinc-500"] {
+  color: var(--muted) !important;
+}
+
+.dashboard-app main > header [class*="bg-white/5"] {
+  background: rgba(24, 23, 28, 0.05) !important;
+}
+
+.dashboard-app main > header [class*="border-white"] {
+  border-color: var(--line) !important;
+}
+
+.dashboard-app .dashboard-content,
+.dashboard-app .management-page,
+.dashboard-app .catalog-page {
+  position: relative;
+  width: 100%;
+  max-width: none !important;
+  margin: 0 !important;
+  color: var(--ink) !important;
+}
+
+.dashboard-app .dashboard-content {
+  padding: clamp(32px, 5vw, 78px) clamp(24px, 5vw, 76px) 84px !important;
+}
+
+.dashboard-app .management-page,
+.dashboard-app .catalog-page {
+  padding: clamp(32px, 5vw, 66px) clamp(24px, 5vw, 76px) 84px !important;
+}
+
+.dashboard-app .dashboard-content h1,
+.dashboard-app .management-page h1,
+.dashboard-app .catalog-page h1 {
+  max-width: 880px;
+  color: var(--ink) !important;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.5rem, 5vw, 5.6rem) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.09em !important;
+  line-height: 0.92 !important;
+}
+
+.dashboard-app .dashboard-content h1::after,
+.dashboard-app .management-page h1::after,
+.dashboard-app .catalog-page h1::after {
+  display: inline-block;
+  width: 0.35em;
+  height: 0.35em;
+  margin-left: 0.18em;
+  border-radius: 50%;
+  background: var(--acid);
+  box-shadow: 0 0 24px rgba(197, 255, 74, 0.9);
+  content: '';
+}
+
+.dashboard-app .text-primary,
+.dashboard-app .text-white {
+  color: var(--ink) !important;
+}
+
+.dashboard-app .text-on-surface-variant,
+.dashboard-app [class*="text-zinc-"] {
+  color: var(--muted) !important;
+}
+
+.dashboard-app [class*="bg-white/5"] {
+  background: var(--panel) !important;
+}
+
+.dashboard-app [class*="bg-[#0c0f0f]"],
+.dashboard-app [class*="bg-[#0a0a0a]"] {
+  background: rgba(24, 23, 28, 0.045) !important;
+}
+
+.dashboard-app [class*="border-white/10"],
+.dashboard-app [class*="border-white/5"] {
+  border-color: var(--line) !important;
+}
+
+.dashboard-app [class*="bg-[#bcf540]"],
+.dashboard-app [class*="bg-[#c5ff4a]"] {
+  background: var(--acid) !important;
+}
+
+.dashboard-app [class*="text-[#bcf540]"],
+.dashboard-app [class*="text-[#c5ff4a]"] {
+  color: #5b7100 !important;
+}
+
+.dashboard-app [class*="border-[#bcf540]"],
+.dashboard-app [class*="border-[#c5ff4a]"] {
+  border-color: rgba(91, 113, 0, 0.42) !important;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div,
+.dashboard-app .dashboard-content > section:nth-of-type(3) > div,
+.dashboard-app .management-page [class*="backdrop-blur"],
+.dashboard-app .catalog-page [class*="backdrop-blur"] {
+  border-radius: 26px !important;
+  box-shadow: var(--shadow);
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div {
+  position: relative;
+  min-height: 190px;
+  overflow: hidden;
+  transition: transform 260ms ease, box-shadow 260ms ease, border-color 260ms ease;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div::after {
+  position: absolute;
+  right: -28px;
+  bottom: -45px;
+  width: 145px;
+  height: 145px;
+  border: 1px solid rgba(24, 23, 28, 0.13);
+  border-radius: 50%;
+  content: '';
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div:hover {
+  transform: translateY(-5px) rotate(-0.5deg);
+  box-shadow: 0 32px 80px rgba(28, 24, 34, 0.16);
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div:nth-child(2) {
+  background: rgba(197, 255, 74, 0.7) !important;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div:nth-child(2) [class*="text-zinc-"],
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div:nth-child(2) [class*="text-white"] {
+  color: var(--ink) !important;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(3) {
+  align-items: start;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(3) > div {
+  border: 1px solid var(--line) !important;
+}
+
+.dashboard-app .dashboard-content table {
+  color: var(--ink);
+}
+
+.dashboard-app .dashboard-content table thead,
+.dashboard-app .management-page table thead,
+.dashboard-app .catalog-page table thead {
+  color: var(--muted) !important;
+  letter-spacing: 0.16em;
+}
+
+.dashboard-app .dashboard-content table tbody tr,
+.dashboard-app .management-page table tbody tr,
+.dashboard-app .catalog-page table tbody tr {
+  transition: background 200ms ease, transform 200ms ease;
+}
+
+.dashboard-app .dashboard-content table tbody tr:hover,
+.dashboard-app .management-page table tbody tr:hover,
+.dashboard-app .catalog-page table tbody tr:hover {
+  background: rgba(197, 255, 74, 0.16) !important;
+}
+
+.dashboard-app .dashboard-content button,
+.dashboard-app .management-page button,
+.dashboard-app .catalog-page button {
+  transition: transform 200ms ease, box-shadow 200ms ease, background 200ms ease, color 200ms ease;
+}
+
+.dashboard-app .dashboard-content button:hover,
+.dashboard-app .management-page button:hover,
+.dashboard-app .catalog-page button:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-app .management-page h1,
+.dashboard-app .catalog-page h1 {
+  margin-bottom: 0.4rem;
+}
+
+.dashboard-app .management-page > section:first-child,
+.dashboard-app .catalog-page > div:first-child > div:first-child {
+  position: relative;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dashboard-app .management-page table,
+.dashboard-app .catalog-page table {
+  color: var(--ink);
+}
+
+.dashboard-app .management-page input,
+.dashboard-app .management-page select,
+.dashboard-app .catalog-page input {
+  color: var(--ink) !important;
+  border-color: var(--line) !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+}
+
+.dashboard-app .management-page input:focus,
+.dashboard-app .management-page select:focus,
+.dashboard-app .catalog-page input:focus {
+  border-color: rgba(91, 113, 0, 0.55) !important;
+  box-shadow: 0 0 0 4px rgba(197, 255, 74, 0.2) !important;
+}
+
+.dashboard-app [class*="fixed"][class*="inset-0"] {
+  background: rgba(18, 17, 23, 0.62) !important;
+}
+
+.dashboard-app [class*="fixed"][class*="inset-0"] > div {
+  background: var(--paper-bright) !important;
+  border-color: var(--line) !important;
+  color: var(--ink) !important;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.24) !important;
+}
+
+.dashboard-app > button {
+  right: 34px !important;
+  bottom: 34px !important;
+  width: 64px !important;
+  height: 64px !important;
+  border: 4px solid var(--paper) !important;
+  background: var(--ink) !important;
+  color: var(--acid) !important;
+  box-shadow: 0 18px 36px rgba(24, 23, 28, 0.24) !important;
+}
+
+/* Login / hero state */
+.login-page {
+  background:
+    radial-gradient(circle at 50% 35%, rgba(157, 140, 255, 0.16), transparent 32rem),
+    #111017 !important;
+  color: #f4f1eb;
+}
+
+.login-page::after {
+  position: absolute;
+  inset: 0;
+  z-index: 11;
+  pointer-events: none;
+  content: '';
+  opacity: 0.16;
+  background-image: linear-gradient(rgba(255,255,255,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.07) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(to bottom, black, transparent 78%);
+}
+
+.login-page canvas {
+  opacity: 0.72;
+  filter: saturate(0.8) contrast(1.1);
+}
+
+.login-page .login-topbar {
+  z-index: 30;
+  padding: 26px clamp(22px, 5vw, 72px) !important;
+  border-bottom-color: rgba(244, 241, 235, 0.16) !important;
+}
+
+.login-page .login-topbar > div:first-child::before {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 14px;
+  border-radius: 50%;
+  background: var(--acid);
+  box-shadow: 0 0 22px var(--acid);
+  content: '';
+}
+
+.login-page .login-topbar [class*="text-white"] {
+  color: #f4f1eb !important;
+}
+
+.login-page .login-auth-shell {
+  max-width: 520px !important;
+}
+
+.login-page .login-card {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(30px, 6vw, 64px) !important;
+  border: 1px solid rgba(244, 241, 235, 0.2) !important;
+  border-radius: 30px !important;
+  background: rgba(20, 18, 28, 0.64) !important;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+.login-page .login-card::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(197, 255, 74, 0.26), transparent 68%);
+  content: '';
+  transform: translate(35%, -35%);
+  pointer-events: none;
+}
+
+.login-page .login-card h1 {
+  color: #f4f1eb !important;
+  font-size: clamp(3rem, 8vw, 5.8rem) !important;
+  letter-spacing: -0.1em !important;
+  line-height: 0.86 !important;
+}
+
+.login-page .login-card p {
+  color: rgba(244, 241, 235, 0.62) !important;
+}
+
+.login-page .login-card label {
+  color: rgba(244, 241, 235, 0.48) !important;
+}
+
+.login-page .login-card input {
+  min-height: 42px;
+  color: #f4f1eb !important;
+  border-bottom-color: rgba(244, 241, 235, 0.24) !important;
+  background: transparent !important;
+}
+
+.login-page .login-card input:focus {
+  border-bottom-color: var(--acid) !important;
+  box-shadow: none !important;
+}
+
+.login-page .login-card button[type="submit"] {
+  border-radius: 999px;
+  background: var(--acid) !important;
+  box-shadow: 0 14px 32px rgba(197, 255, 74, 0.16);
+}
+
+.login-page .login-card button[type="submit"]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 20px 42px rgba(197, 255, 74, 0.24);
+}
+
+.login-page .login-footer {
+  z-index: 30;
+  color: rgba(244, 241, 235, 0.4);
+}
+
+/* Small screens keep the information architecture, but collapse the chrome. */
+@media (max-width: 900px) {
+  .dashboard-app > aside {
+    width: 78px !important;
+  }
+
+  .dashboard-app > aside > div:first-child,
+  .dashboard-app > aside > div:last-child {
+    padding: 24px 12px !important;
+  }
+
+  .dashboard-app aside h2,
+  .dashboard-app aside p,
+  .dashboard-app aside nav button > span:last-child {
+    display: none;
+  }
+
+  .dashboard-app aside nav button,
+  .dashboard-app aside > div:last-child button {
+    justify-content: center;
+    padding: 0 !important;
+  }
+
+  .dashboard-app aside > div:last-child button {
+    font-size: 0;
+  }
+
+  .dashboard-app aside > div:last-child button span {
+    font-size: 18px;
+  }
+
+  .dashboard-app main {
+    margin-left: 78px !important;
+  }
+
+  .dashboard-app .dashboard-content,
+  .dashboard-app .management-page,
+  .dashboard-app .catalog-page {
+    padding-right: 22px !important;
+    padding-left: 22px !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-app main > header {
+    padding: 0 16px !important;
+  }
+
+  .dashboard-app main > header > div:first-child {
+    display: none;
+  }
+
+  .dashboard-app .dashboard-content,
+  .dashboard-app .management-page,
+  .dashboard-app .catalog-page {
+    padding-top: 34px !important;
+    padding-bottom: 48px !important;
+  }
+
+  .dashboard-app .dashboard-content h1,
+  .dashboard-app .management-page h1,
+  .dashboard-app .catalog-page h1 {
+    font-size: 3.1rem !important;
+  }
+
+  .dashboard-app .dashboard-content > section:nth-of-type(2) > div {
+    min-height: 156px;
+  }
+
+  .login-page .login-topbar {
+    padding: 20px !important;
+  }
+
+  .login-page .login-topbar > div:first-child > span:first-child {
+    font-size: 0.9rem;
+  }
+
+  .login-page .login-card {
+    padding: 32px 24px !important;
+  }
+
+  .login-page .login-footer {
+    display: none;
+  }
+}
+
+/* Product-design refinement: hierarchy, affordance, and consistent rhythm. */
+.dashboard-app .brand-lockup {
+  position: relative;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dashboard-app .brand-lockup::after {
+  position: absolute;
+  right: 0;
+  bottom: -2px;
+  width: 34px;
+  height: 3px;
+  border-radius: 99px;
+  background: var(--acid);
+  content: '';
+}
+
+.dashboard-app .dashboard-topbar {
+  min-height: 86px;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child::before {
+  display: block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--acid);
+  box-shadow: 0 0 16px rgba(197, 255, 74, 0.72);
+  content: '';
+}
+
+.dashboard-app .dashboard-hero {
+  min-height: 210px;
+  align-items: flex-end;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+.dashboard-app .dashboard-hero-copy {
+  position: relative;
+  max-width: 760px;
+}
+
+.dashboard-app .dashboard-hero-copy::before,
+.dashboard-app .management-header::before,
+.dashboard-app .catalog-header::before {
+  display: block;
+  margin-bottom: 18px;
+  color: var(--muted);
+  content: 'INVENTORY / OPERATIONS';
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+}
+
+.dashboard-app .dashboard-hero-copy p,
+.dashboard-app .management-header p,
+.dashboard-app .catalog-header p {
+  max-width: 560px;
+  color: var(--muted) !important;
+  font-size: 0.98rem !important;
+  line-height: 1.55 !important;
+}
+
+.dashboard-app .dashboard-hero-meta {
+  align-items: center;
+}
+
+.dashboard-app .dashboard-live-indicator {
+  min-width: 148px;
+  justify-content: center;
+  border-radius: 999px !important;
+  background: rgba(24, 23, 28, 0.06) !important;
+  color: var(--ink);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.5);
+}
+
+.dashboard-app .dashboard-live-indicator span:last-child {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.dashboard-app .metric-card {
+  display: flex;
+  min-height: 212px !important;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 28px !important;
+  border-radius: 24px !important;
+}
+
+.dashboard-app .metric-card > div:last-child {
+  position: relative;
+  z-index: 1;
+}
+
+.dashboard-app .metric-card h3 {
+  margin-bottom: 10px !important;
+  font-size: 0.64rem !important;
+  letter-spacing: 0.18em !important;
+}
+
+.dashboard-app .metric-card p {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2.8rem, 4vw, 4.7rem) !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.09em !important;
+  line-height: 0.86 !important;
+}
+
+.dashboard-app .metric-card--sku {
+  background: rgba(255, 255, 255, 0.72) !important;
+}
+
+.dashboard-app .metric-card--scans {
+  background: var(--ink) !important;
+  color: var(--paper-bright) !important;
+}
+
+.dashboard-app .metric-card--scans [class*="text-zinc-"],
+.dashboard-app .metric-card--scans [class*="text-white"],
+.dashboard-app .metric-card--scans h3 {
+  color: rgba(244, 241, 235, 0.72) !important;
+}
+
+.dashboard-app .metric-card--scans p {
+  color: var(--paper-bright) !important;
+}
+
+.dashboard-app .metric-card--scans::after {
+  width: 240px !important;
+  height: 240px !important;
+  border-color: rgba(197, 255, 74, 0.3) !important;
+}
+
+.dashboard-app .metric-card--alerts {
+  background: rgba(255, 121, 85, 0.12) !important;
+  border-color: rgba(255, 121, 85, 0.25) !important;
+}
+
+.dashboard-app .metric-card--alerts::after {
+  border-color: rgba(255, 121, 85, 0.3) !important;
+}
+
+.dashboard-app .activity-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel {
+  border-radius: 24px !important;
+  box-shadow: 0 20px 60px rgba(28, 24, 34, 0.09) !important;
+}
+
+.dashboard-app .activity-panel > div:first-child {
+  min-height: 78px;
+  padding: 18px 22px !important;
+  background: rgba(24, 23, 28, 0.045) !important;
+}
+
+.dashboard-app .activity-panel table th,
+.dashboard-app .management-table-panel table th,
+.dashboard-app .catalog-table-panel table th {
+  padding-top: 16px !important;
+  padding-bottom: 16px !important;
+  font-size: 0.61rem !important;
+}
+
+.dashboard-app .activity-panel table td,
+.dashboard-app .management-table-panel table td,
+.dashboard-app .catalog-table-panel table td {
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+  border-color: rgba(24, 23, 28, 0.08) !important;
+}
+
+.dashboard-app .health-panel {
+  padding: 24px !important;
+}
+
+.dashboard-app .health-panel h3 {
+  font-size: 1.55rem !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.06em;
+}
+
+.dashboard-app .health-panel > div > div {
+  border-radius: 16px !important;
+  background: rgba(24, 23, 28, 0.045) !important;
+}
+
+.dashboard-app .health-panel > div > div:hover {
+  background: rgba(197, 255, 74, 0.2) !important;
+}
+
+.dashboard-app .restock-panel {
+  min-height: 224px;
+  border-color: rgba(24, 23, 28, 0.12) !important;
+  background: var(--ink);
+}
+
+.dashboard-app .restock-panel::before {
+  position: absolute;
+  top: 18px;
+  left: 20px;
+  color: rgba(244, 241, 235, 0.58);
+  content: 'STOCK ALERTS';
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.dashboard-app .restock-panel h4 {
+  font-size: 1.45rem !important;
+  letter-spacing: -0.05em;
+}
+
+.dashboard-app .restock-panel p {
+  max-width: 320px;
+  line-height: 1.55;
+}
+
+.dashboard-app .catalog-header,
+.dashboard-app .management-header {
+  min-height: 156px;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--line);
+}
+
+.dashboard-app .catalog-header::before,
+.dashboard-app .management-header::before {
+  content: 'WORKSPACE / INVENTORY SYSTEM';
+}
+
+.dashboard-app .catalog-toolbar {
+  display: flex;
+  min-height: 74px;
+  align-items: center;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  box-shadow: 0 12px 35px rgba(28, 24, 34, 0.06) !important;
+}
+
+.dashboard-app .catalog-toolbar input {
+  min-height: 48px;
+  border-radius: 999px !important;
+  border: 1px solid var(--line) !important;
+  padding-left: 46px !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dashboard-app .catalog-toolbar button,
+.dashboard-app .management-header button {
+  min-height: 46px;
+  border-radius: 999px !important;
+  font-size: 0.64rem !important;
+  letter-spacing: 0.14em !important;
+}
+
+.dashboard-app .management-header button,
+.dashboard-app .catalog-header button {
+  padding-right: 22px !important;
+  padding-left: 22px !important;
+  background: var(--ink) !important;
+  color: var(--paper-bright) !important;
+  box-shadow: 0 12px 26px rgba(24, 23, 28, 0.16) !important;
+}
+
+.dashboard-app .finance-stat-card {
+  min-height: 176px;
+  border-radius: 22px !important;
+  background: rgba(255, 255, 255, 0.58) !important;
+  box-shadow: 0 16px 42px rgba(28, 24, 34, 0.07) !important;
+}
+
+.dashboard-app .finance-stat-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: clamp(2rem, 4vw, 3.5rem) !important;
+  letter-spacing: -0.08em;
+}
+
+.dashboard-app .management-modal > div,
+.dashboard-app .dashboard-app [class*="fixed"][class*="inset-0"] > div {
+  border-radius: 24px !important;
+}
+
+.dashboard-app button:focus-visible,
+.login-page button:focus-visible,
+.dashboard-app input:focus-visible,
+.login-page input:focus-visible,
+.dashboard-app select:focus-visible {
+  outline: 3px solid rgba(157, 140, 255, 0.7) !important;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+@media (max-width: 640px) {
+  .dashboard-app .dashboard-hero,
+  .dashboard-app .catalog-header,
+  .dashboard-app .management-header {
+    min-height: 0;
+    align-items: flex-start;
+    gap: 24px;
+    padding-bottom: 28px;
+  }
+
+  .dashboard-app .dashboard-hero-meta {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .dashboard-app .metric-card {
+    min-height: 168px !important;
+    padding: 24px !important;
+  }
+
+  .dashboard-app .metric-card p {
+    font-size: 3.6rem !important;
+  }
+
+  .dashboard-app .catalog-toolbar {
+    align-items: stretch;
+  }
+
+  .dashboard-app .catalog-toolbar > div,
+  .dashboard-app .catalog-toolbar button {
+    width: 100%;
+  }
+
+  .dashboard-app .catalog-toolbar button {
+    justify-content: center;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reference layout: calm clinic-style workspace
+   The reference image uses a soft grey canvas, a white working surface and
+   deep green navigation / status surfaces. This block is the final visual
+   layer for that composition; it does not alter any React behavior.
+---------------------------------------------------------------------------- */
+:root {
+  --ref-canvas: #d8dad8;
+  --ref-surface: #f8f9f7;
+  --ref-surface-2: #ffffff;
+  --ref-green: #253c30;
+  --ref-green-2: #3e5a49;
+  --ref-green-3: #54715d;
+  --ref-lime: #8bdc14;
+  --ref-ink: #18231d;
+  --ref-muted: #8a918b;
+  --ref-line: #e5e9e4;
+  --ref-shadow: 0 24px 70px rgba(30, 43, 35, 0.12);
+}
+
+#root {
+  display: block;
+  min-height: 100vh;
+}
+
+html,
+body {
+  background: var(--ref-canvas) !important;
+  color: var(--ref-ink);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+}
+
+.dashboard-app {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 100vh;
+  padding: 40px;
+  background:
+    radial-gradient(circle at 78% 4%, rgba(255, 255, 255, 0.58), transparent 26rem),
+    var(--ref-canvas) !important;
+}
+
+.dashboard-app::after {
+  display: none;
+}
+
+.dashboard-app > aside.dashboard-sidebar {
+  position: relative !important;
+  inset: auto !important;
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  width: 74px !important;
+  height: calc(100vh - 80px) !important;
+  min-height: 620px;
+  flex-direction: column;
+  border: 0 !important;
+  border-radius: 38px;
+  background: var(--ref-green) !important;
+  box-shadow: 0 20px 42px rgba(29, 47, 36, 0.18);
+  color: #f6f8f5 !important;
+  overflow: hidden;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:first-child,
+.dashboard-app > aside.dashboard-sidebar > div:last-child {
+  padding: 12px 10px !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:first-child {
+  display: flex;
+  min-height: 0;
+  flex: 1;
+  flex-direction: column;
+}
+
+.dashboard-app .brand-lockup {
+  display: flex;
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 26px !important;
+  padding: 0 !important;
+  border: 0;
+}
+
+.dashboard-app .brand-lockup::after,
+.dashboard-app aside nav::before {
+  display: none;
+}
+
+.dashboard-app .brand-lockup > div:first-child {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 14px !important;
+  background: var(--ref-lime) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-app .brand-lockup > div:first-child span {
+  color: var(--ref-green) !important;
+}
+
+.dashboard-app .brand-lockup > div:last-child {
+  display: none;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav button {
+  display: flex;
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 18px !important;
+  color: rgba(246, 248, 245, 0.54) !important;
+  background: transparent !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav button:hover {
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav button[class*="bcf540"] {
+  color: var(--ref-green) !important;
+  background: var(--ref-lime) !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav button[class*="bcf540"]::after {
+  display: none;
+}
+
+.dashboard-app > aside.dashboard-sidebar nav button > span:last-child {
+  display: none;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:last-child {
+  display: flex;
+  justify-content: center;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:last-child button {
+  display: flex;
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: var(--ref-lime) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:last-child button span:first-child {
+  font-size: 20px;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:last-child button:hover {
+  background: var(--ref-lime) !important;
+  color: var(--ref-green) !important;
+  transform: translateY(-2px);
+}
+
+.dashboard-app > main {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  width: 100%;
+  min-width: 0;
+  min-height: calc(100vh - 80px);
+  flex-direction: column;
+  margin-left: 0 !important;
+  overflow: hidden;
+  border-radius: 34px;
+  background: var(--ref-surface) !important;
+  color: var(--ref-ink) !important;
+  box-shadow: var(--ref-shadow);
+}
+
+.dashboard-app > main::before {
+  display: none;
+}
+
+.dashboard-app .dashboard-topbar {
+  position: relative;
+  display: flex;
+  min-height: 82px;
+  height: 82px !important;
+  flex: 0 0 auto;
+  padding: 0 32px !important;
+  border: 0 !important;
+  background: var(--ref-surface) !important;
+  color: var(--ref-ink) !important;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child {
+  gap: 10px;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child::before {
+  display: none;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child::after {
+  display: block;
+  width: 210px;
+  height: 38px;
+  padding-left: 18px;
+  border-radius: 999px;
+  color: #a6ada7;
+  background: var(--ref-surface-2);
+  box-shadow: inset 0 0 0 1px var(--ref-line);
+  content: '';
+  font-size: 0.72rem;
+  line-height: 38px;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child > span {
+  display: none;
+}
+
+.dashboard-app .dashboard-topbar > div:last-child {
+  gap: 12px;
+}
+
+.dashboard-app .dashboard-topbar [class*="bg-white/5"] {
+  background: var(--ref-surface-2) !important;
+  border-color: var(--ref-line) !important;
+}
+
+.dashboard-app .dashboard-topbar [class*="text-zinc-500"],
+.dashboard-app .dashboard-topbar [class*="text-zinc-300"],
+.dashboard-app .dashboard-topbar [class*="text-white"] {
+  color: var(--ref-ink) !important;
+}
+
+.dashboard-app .dashboard-topbar [class*="bcf540"] {
+  color: var(--ref-green) !important;
+}
+
+.dashboard-app .dashboard-content,
+.dashboard-app .management-page,
+.dashboard-app .catalog-page {
+  width: 100%;
+  max-width: none !important;
+  flex: 1 1 auto;
+  margin: 0 !important;
+  padding: 24px 34px 48px !important;
+  background: var(--ref-surface) !important;
+  color: var(--ref-ink) !important;
+}
+
+.dashboard-app .dashboard-content {
+  overflow: auto;
+}
+
+.dashboard-app .dashboard-hero {
+  min-height: 0;
+  align-items: stretch;
+  gap: 18px;
+  padding: 0 0 24px;
+  border: 0;
+}
+
+.dashboard-app .dashboard-hero-copy {
+  max-width: none;
+  padding: 22px 26px 20px;
+  border-radius: 23px;
+  background: var(--ref-green);
+  color: #ffffff;
+  box-shadow: 0 12px 26px rgba(37, 60, 48, 0.1);
+}
+
+.dashboard-app .dashboard-hero-copy::before {
+  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.58);
+  content: 'INVENTORY OVERVIEW';
+  font-size: 0.59rem;
+  letter-spacing: 0.14em;
+}
+
+.dashboard-app .dashboard-hero-copy h1 {
+  margin: 0 0 6px !important;
+  color: #ffffff !important;
+  font-size: clamp(1.35rem, 2.4vw, 2rem) !important;
+  font-weight: 600 !important;
+  letter-spacing: -0.06em !important;
+  line-height: 1 !important;
+}
+
+.dashboard-app .dashboard-hero-copy h1::after {
+  display: none;
+}
+
+.dashboard-app .dashboard-hero-copy p {
+  color: rgba(255, 255, 255, 0.64) !important;
+  font-size: 0.78rem !important;
+}
+
+.dashboard-app .dashboard-hero-meta {
+  min-width: 164px;
+  align-items: stretch;
+  padding: 0 !important;
+}
+
+.dashboard-app .dashboard-live-indicator {
+  min-width: 0;
+  height: 100%;
+  border: 1px solid var(--ref-line) !important;
+  border-radius: 23px !important;
+  background: var(--ref-surface-2) !important;
+  box-shadow: none;
+}
+
+.dashboard-app .dashboard-live-indicator span:last-child {
+  color: var(--ref-ink) !important;
+  font-size: 0.58rem;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 0 !important;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div,
+.dashboard-app .metric-card {
+  min-height: 168px !important;
+  padding: 21px !important;
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: var(--ref-surface-2) !important;
+  box-shadow: 0 8px 24px rgba(29, 47, 36, 0.06) !important;
+  transform: none !important;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div:hover,
+.dashboard-app .metric-card:hover {
+  box-shadow: 0 14px 32px rgba(29, 47, 36, 0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+.dashboard-app .metric-card::after {
+  right: 18px;
+  bottom: 16px;
+  width: 84px !important;
+  height: 34px !important;
+  border: 0 !important;
+  border-radius: 0;
+  background: linear-gradient(145deg, transparent 48%, rgba(139, 220, 20, 0.86) 49% 51%, transparent 52%), linear-gradient(35deg, transparent 45%, rgba(139, 220, 20, 0.4) 46% 48%, transparent 49%);
+  opacity: 0.7;
+}
+
+.dashboard-app .metric-card--scans {
+  color: var(--ref-ink) !important;
+  background: var(--ref-surface-2) !important;
+}
+
+.dashboard-app .metric-card--scans p,
+.dashboard-app .metric-card--scans h3 {
+  background: transparent !important;
+}
+
+.dashboard-app .metric-card--alerts {
+  border: 1px solid rgba(139, 220, 20, 0.3) !important;
+  background: #f3f9e8 !important;
+}
+
+.dashboard-app .metric-card h3 {
+  color: var(--ref-muted) !important;
+  font-size: 0.58rem !important;
+  letter-spacing: 0.1em !important;
+}
+
+.dashboard-app .metric-card p {
+  color: var(--ref-ink) !important;
+  font-size: clamp(2rem, 3.6vw, 3.5rem) !important;
+  letter-spacing: -0.09em !important;
+}
+
+.dashboard-app .metric-card--scans h3 {
+  white-space: nowrap;
+}
+
+.dashboard-app .metric-card--scans .metric-value {
+  display: flex;
+  min-height: 3.2rem;
+  align-items: flex-end;
+  white-space: nowrap;
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(3) {
+  display: grid;
+  grid-template-columns: minmax(0, 1.68fr) minmax(280px, 0.72fr);
+  gap: 14px;
+  margin-top: 14px !important;
+  padding-bottom: 0;
+}
+
+.dashboard-app .activity-panel,
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel {
+  border: 0 !important;
+  border-radius: 24px !important;
+  box-shadow: 0 8px 28px rgba(29, 47, 36, 0.07) !important;
+}
+
+.dashboard-app .activity-panel {
+  background: var(--ref-surface-2) !important;
+}
+
+.dashboard-app .activity-panel > div:first-child {
+  min-height: 68px;
+  padding: 16px 20px !important;
+  border-bottom: 1px solid var(--ref-line) !important;
+  background: var(--ref-surface-2) !important;
+}
+
+.dashboard-app .activity-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .catalog-table-panel table thead {
+  background: #f6f8f5 !important;
+  color: var(--ref-muted) !important;
+}
+
+.dashboard-app .activity-panel table td,
+.dashboard-app .management-table-panel table td,
+.dashboard-app .catalog-table-panel table td {
+  border-color: var(--ref-line) !important;
+  color: var(--ref-ink) !important;
+}
+
+.dashboard-app .activity-panel table tbody tr:hover,
+.dashboard-app .management-table-panel table tbody tr:hover,
+.dashboard-app .catalog-table-panel table tbody tr:hover {
+  background: #f4f9ec !important;
+}
+
+.dashboard-app .health-panel {
+  align-self: stretch;
+  padding: 22px !important;
+  background: var(--ref-green) !important;
+  color: #ffffff !important;
+}
+
+.dashboard-app .health-panel h3,
+.dashboard-app .health-panel [class*="text-white"] {
+  color: #ffffff !important;
+}
+
+.dashboard-app .health-panel [class*="text-zinc-"] {
+  color: rgba(255, 255, 255, 0.62) !important;
+}
+
+.dashboard-app .health-panel > div > div {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+.dashboard-app .health-panel > div > div:hover {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+
+.dashboard-app .health-panel [class*="bg-[#c5ff4a]"],
+.dashboard-app .health-panel [class*="bg-[#bcf540]"] {
+  background: var(--ref-lime) !important;
+  color: var(--ref-green) !important;
+}
+
+.dashboard-app .health-panel [class*="text-[#c5ff4a]"],
+.dashboard-app .health-panel [class*="text-[#bcf540]"] {
+  color: var(--ref-lime) !important;
+}
+
+.dashboard-app .restock-panel {
+  display: flex;
+  min-height: 176px;
+  background: var(--ref-green) !important;
+}
+
+.dashboard-app .dashboard-content .material-symbols-outlined {
+  color: var(--ref-green-2);
+}
+
+.dashboard-app .management-page,
+.dashboard-app .catalog-page {
+  overflow: auto;
+}
+
+.dashboard-app .management-header,
+.dashboard-app .catalog-header {
+  min-height: 0;
+  padding: 18px 0 24px !important;
+  border: 0 !important;
+}
+
+.dashboard-app .management-header::before,
+.dashboard-app .catalog-header::before {
+  margin-bottom: 12px;
+  content: 'WORKSPACE / INVENTORY SYSTEM';
+}
+
+.dashboard-app .management-page h1,
+.dashboard-app .catalog-page h1 {
+  margin: 0 0 8px !important;
+  font-size: clamp(2rem, 4vw, 3.5rem) !important;
+  letter-spacing: -0.09em !important;
+}
+
+.dashboard-app .management-page h1::after,
+.dashboard-app .catalog-page h1::after {
+  display: none;
+}
+
+.dashboard-app .management-table-panel,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .catalog-toolbar {
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: var(--ref-surface-2) !important;
+  box-shadow: 0 8px 28px rgba(29, 47, 36, 0.07) !important;
+}
+
+.dashboard-app .catalog-toolbar {
+  padding: 12px !important;
+}
+
+.dashboard-app .catalog-toolbar input,
+.dashboard-app .management-page input,
+.dashboard-app .management-page select {
+  border: 1px solid var(--ref-line) !important;
+  border-radius: 999px !important;
+  background: #f5f7f4 !important;
+  color: var(--ref-ink) !important;
+}
+
+.dashboard-app .catalog-toolbar button,
+.dashboard-app .management-header button,
+.dashboard-app .catalog-header button {
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--ref-lime) !important;
+  color: var(--ref-green) !important;
+  box-shadow: none !important;
+}
+
+.dashboard-app .catalog-toolbar button:hover,
+.dashboard-app .management-header button:hover,
+.dashboard-app .catalog-header button:hover {
+  background: #a4eb2e !important;
+}
+
+.dashboard-app .finance-stat-card {
+  min-height: 154px;
+  border: 0 !important;
+  border-radius: 22px !important;
+  background: var(--ref-surface-2) !important;
+  box-shadow: 0 8px 28px rgba(29, 47, 36, 0.07) !important;
+}
+
+.dashboard-app .finance-stat-card h3 {
+  color: var(--ref-ink) !important;
+  font-size: clamp(1.8rem, 3.2vw, 3rem) !important;
+}
+
+.dashboard-app .management-modal > div,
+.dashboard-app [class*="fixed"][class*="inset-0"] > div {
+  border: 0 !important;
+  border-radius: 28px !important;
+  background: var(--ref-surface) !important;
+  color: var(--ref-ink) !important;
+}
+
+/* Login keeps the existing Three.js scene alive, but presents it as a soft
+   ambient texture behind the reference-style authentication card. */
+.login-page {
+  background:
+    radial-gradient(circle at 50% 35%, rgba(157, 140, 255, 0.16), transparent 32rem),
+    #111017 !important;
+  color: #f4f1eb !important;
+}
+
+.login-page canvas {
+  opacity: 0.72;
+  filter: saturate(0.8) contrast(1.1);
+}
+
+.login-page::after {
+  display: none;
+}
+
+.login-page .login-topbar {
+  padding: 22px 36px !important;
+  border: 0 !important;
+  color: var(--ref-ink) !important;
+}
+
+.login-page .login-topbar [class*="text-white"] {
+  color: var(--ref-green) !important;
+}
+
+.login-page .login-topbar > div:first-child > span:first-child {
+  color: #f4f1eb !important;
+}
+
+.login-page .login-topbar > div:first-child::before {
+  background: var(--ref-lime);
+  box-shadow: none;
+}
+
+.login-page .login-auth-shell {
+  max-width: 470px !important;
+}
+
+.login-page .login-card {
+  padding: 42px !important;
+  border: 0 !important;
+  border-radius: 30px !important;
+  background: var(--ref-surface) !important;
+  box-shadow: 0 26px 70px rgba(30, 43, 35, 0.18) !important;
+}
+
+.login-page .login-card h1 {
+  color: var(--ref-green) !important;
+  font-size: clamp(2.7rem, 7vw, 4.6rem) !important;
+}
+
+.login-page .login-card p,
+.login-page .login-card label {
+  color: var(--ref-muted) !important;
+}
+
+.login-page .login-card input {
+  color: var(--ref-ink) !important;
+  border-bottom-color: var(--ref-line) !important;
+}
+
+.login-page .login-card button[type="submit"] {
+  color: var(--ref-green) !important;
+  background: var(--ref-lime) !important;
+  box-shadow: none;
+}
+
+.login-page .login-card button[type="submit"]:hover {
+  background: #a4eb2e !important;
+  box-shadow: none;
+}
+
+.login-page .login-footer {
+  color: var(--ref-muted) !important;
+}
+
+@media (max-width: 900px) {
+  .dashboard-app {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  .dashboard-app > aside.dashboard-sidebar {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100% !important;
+    height: 72px !important;
+    min-height: 0;
+    flex-direction: row;
+    border-radius: 28px;
+  }
+
+  .dashboard-app > aside.dashboard-sidebar > div:first-child {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 8px 10px !important;
+  }
+
+  .dashboard-app .brand-lockup {
+    width: 48px;
+    height: 48px;
+    flex: 0 0 48px;
+    margin: 0 12px 0 0 !important;
+  }
+
+  .dashboard-app > aside.dashboard-sidebar nav {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+
+  .dashboard-app > aside.dashboard-sidebar nav button {
+    flex: 0 0 48px;
+  }
+
+  .dashboard-app > aside.dashboard-sidebar > div:last-child {
+    padding: 8px !important;
+  }
+
+  .dashboard-app > main {
+    grid-column: 1;
+    grid-row: 2;
+    min-height: calc(100vh - 104px);
+  }
+
+  .dashboard-app .dashboard-content > section:nth-of-type(2) {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-app .dashboard-content > section:nth-of-type(3) {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-app .health-panel {
+    min-height: 330px;
+  }
+}
+
+@media (max-width: 560px) {
+  .dashboard-app .dashboard-topbar {
+    min-height: 68px;
+    height: 68px !important;
+    padding: 0 18px !important;
+  }
+
+  .dashboard-app .dashboard-topbar > div:first-child::after {
+    width: 150px;
+  }
+
+  .dashboard-app .dashboard-content,
+  .dashboard-app .management-page,
+  .dashboard-app .catalog-page {
+    padding: 18px 16px 34px !important;
+  }
+
+  .dashboard-app .dashboard-hero {
+    flex-direction: column;
+  }
+
+  .dashboard-app .dashboard-hero-meta {
+    min-height: 54px;
+  }
+
+  .dashboard-app .dashboard-live-indicator {
+    width: 100%;
+    min-height: 54px;
+  }
+
+  .login-page .login-topbar {
+    padding: 18px !important;
+  }
+
+  .login-page .login-card {
+    padding: 32px 24px !important;
+  }
+}
+
+/* Button-label correction layer. Keep labels on one readable line and make
+   icon-only controls intentional instead of accidentally clipping their text. */
+.dashboard-app button,
+.login-page button {
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: clip;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:last-child button {
+  font-size: 0 !important;
+  line-height: 1 !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar > div:last-child button > span:first-child {
+  display: flex;
+  width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px !important;
+  line-height: 20px !important;
+  transform: translate(2px, 1px);
+}
+
+.dashboard-app .restock-panel button {
+  color: var(--ref-lime) !important;
+  background: transparent !important;
+  overflow: visible;
+}
+
+.dashboard-app .restock-panel button:hover {
+  color: #ffffff !important;
+}
+
+.dashboard-app .catalog-toolbar button,
+.dashboard-app .management-header button,
+.dashboard-app .catalog-header button,
+.dashboard-app .management-table-panel button,
+.dashboard-app .catalog-table-panel button,
+.dashboard-app .activity-panel button {
+  overflow: visible;
+  line-height: 1.2 !important;
+}
+
+/* Keep supporting labels factual and tied to the rendered controls. */
+.dashboard-app .dashboard-topbar > div:first-child::after {
+  display: none;
+}
+
+.dashboard-app .dashboard-topbar > div:first-child > span {
+  display: inline-block !important;
+  color: var(--ref-muted) !important;
+  font-size: 0.68rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.dashboard-app .dashboard-hero-copy::before {
+  content: 'INVENTORY OVERVIEW';
+}
+
+.dashboard-app .management-header::before,
+.dashboard-app .catalog-header::before {
+  content: 'WORKSPACE';
+}
+
+.dashboard-app .restock-panel::before {
+  content: 'STOCK ALERTS';
+}
+
+.dashboard-app .restock-panel > img {
+  display: none;
+}
+
+.dashboard-app .restock-panel {
+  background: var(--ref-green) !important;
+}
+
+.login-page canvas {
+  opacity: 0.72 !important;
+}
+
+.login-page .login-card::before {
+  display: none;
+}
+
+/* Keep the topbar account menu readable against its dark surface. */
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2 {
+  color: #f4f1eb !important;
+  background: #161818 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2 [class*="text-zinc-500"] {
+  color: #8a918b !important;
+}
+
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2 [class*="text-zinc-300"],
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2 [class*="text-white"] {
+  color: #f4f1eb !important;
+}
+
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2 [class*="bg-[#bcf540]"] {
+  background: transparent !important;
+}
+
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2 button:hover {
+  color: var(--ref-lime) !important;
+  background: rgba(197, 255, 74, 0.1) !important;
+}
+
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2 [class*="text-red-400"] {
+  color: #f87171 !important;
+}
+
+/* Restore contrast for the dashboard status labels and restock card. */
+.dashboard-app .health-panel [class*="bg-[#c5ff4a]"],
+.dashboard-app .health-panel [class*="bg-[#bcf540]"] {
+  background: rgba(197, 255, 74, 0.1) !important;
+  color: var(--ref-lime) !important;
+}
+
+.dashboard-app .restock-panel h4 {
+  color: #ffffff !important;
+}
+
+.dashboard-app .restock-panel p {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+/* The scan action remains available from the sidebar; hide the duplicate
+   fixed circular action in the lower-right corner. */
+.dashboard-app > button.fixed.bottom-12.right-12 {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   Liquid glass surface layer
+   Visual-only treatment: component geometry, layout and behavior stay intact.
+---------------------------------------------------------------------------- */
+:root {
+  --liquid-canvas: #e7ece9;
+  --liquid-light: rgba(255, 255, 255, 0.48);
+  --liquid-light-strong: rgba(255, 255, 255, 0.68);
+  --liquid-line: rgba(255, 255, 255, 0.68);
+  --liquid-shadow: 0 20px 54px rgba(35, 57, 46, 0.14), 0 1px 0 rgba(255, 255, 255, 0.82) inset;
+  --liquid-dark: rgba(31, 54, 43, 0.82);
+  --liquid-dark-soft: rgba(255, 255, 255, 0.1);
+}
+
+html,
+body {
+  background: var(--liquid-canvas) !important;
+}
+
+.dashboard-app {
+  background:
+    radial-gradient(circle at 14% -8%, rgba(255, 255, 255, 0.8), transparent 28rem),
+    radial-gradient(circle at 88% 8%, rgba(139, 220, 20, 0.13), transparent 24rem),
+    linear-gradient(135deg, #e9eeeb 0%, #dfe7e2 100%) !important;
+}
+
+.dashboard-app > aside.dashboard-sidebar {
+  background: linear-gradient(160deg, rgba(45, 76, 60, 0.94), rgba(24, 45, 35, 0.84)) !important;
+  box-shadow: 0 22px 58px rgba(29, 50, 38, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(145%);
+  backdrop-filter: blur(30px) saturate(145%);
+}
+
+.dashboard-app > aside.dashboard-sidebar,
+.dashboard-app > aside.dashboard-sidebar h2,
+.dashboard-app > aside.dashboard-sidebar [class*="text-white"] {
+  color: #f5f8f5 !important;
+}
+
+.dashboard-app > main {
+  background: rgba(250, 252, 250, 0.46) !important;
+  box-shadow: 0 24px 70px rgba(35, 57, 46, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.82) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(135%);
+  backdrop-filter: blur(28px) saturate(135%);
+}
+
+.dashboard-app .dashboard-topbar {
+  background: rgba(255, 255, 255, 0.38) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.62) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.72) inset !important;
+  -webkit-backdrop-filter: blur(26px) saturate(150%);
+  backdrop-filter: blur(26px) saturate(150%);
+}
+
+.dashboard-app .dashboard-topbar [class*="bg-white/5"] {
+  background: rgba(255, 255, 255, 0.52) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  box-shadow: 0 8px 22px rgba(35, 57, 46, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(145%);
+  backdrop-filter: blur(18px) saturate(145%);
+}
+
+.dashboard-app .dashboard-topbar > div:last-child > div:last-child > div:first-child {
+  background: rgba(255, 255, 255, 0.34) !important;
+  border-color: rgba(255, 255, 255, 0.62) !important;
+  box-shadow: 0 8px 20px rgba(35, 57, 46, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.dashboard-app .dashboard-topbar .absolute.right-0.mt-2 {
+  background: rgba(28, 47, 38, 0.78) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 22px 48px rgba(23, 39, 31, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(135%);
+  backdrop-filter: blur(28px) saturate(135%);
+}
+
+.dashboard-app .dashboard-content,
+.dashboard-app .management-page,
+.dashboard-app .catalog-page {
+  background: rgba(250, 252, 250, 0.16) !important;
+}
+
+.dashboard-app .dashboard-hero-copy {
+  background: linear-gradient(145deg, rgba(48, 83, 65, 0.9), rgba(31, 58, 45, 0.78)) !important;
+  box-shadow: var(--liquid-shadow) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+  backdrop-filter: blur(24px) saturate(135%);
+}
+
+.dashboard-app .dashboard-content > section:nth-of-type(2) > div,
+.dashboard-app .metric-card,
+.dashboard-app .activity-panel,
+.dashboard-app .catalog-toolbar,
+.dashboard-app .catalog-table-panel,
+.dashboard-app .management-table-panel {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.38)) !important;
+  box-shadow: var(--liquid-shadow) !important;
+  outline: 1px solid rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+}
+
+.dashboard-app .metric-card--scans {
+  background: linear-gradient(145deg, rgba(39, 68, 53, 0.92), rgba(24, 45, 35, 0.82)) !important;
+  color: #f5f8f5 !important;
+}
+
+.dashboard-app .metric-card--scans h3,
+.dashboard-app .metric-card--scans p,
+.dashboard-app .metric-card--scans [class*="text-white"],
+.dashboard-app .metric-card--scans [class*="text-zinc-"] {
+  color: #f5f8f5 !important;
+}
+
+.dashboard-app .metric-card:not(.metric-card--scans) [class*="text-white"],
+.dashboard-app .activity-panel [class*="text-white"],
+.dashboard-app .catalog-page [class*="text-white"],
+.dashboard-app .management-page [class*="text-white"] {
+  color: var(--ref-ink) !important;
+}
+
+.dashboard-app .health-panel,
+.dashboard-app .restock-panel {
+  background: linear-gradient(150deg, rgba(45, 76, 60, 0.9), rgba(25, 48, 37, 0.8)) !important;
+  box-shadow: 0 22px 54px rgba(29, 51, 40, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+  outline: 1px solid rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(26px) saturate(135%);
+  backdrop-filter: blur(26px) saturate(135%);
+}
+
+.dashboard-app .health-panel h3,
+.dashboard-app .health-panel [class*="text-white"],
+.dashboard-app .restock-panel h4,
+.dashboard-app .restock-panel [class*="text-white"] {
+  color: #ffffff !important;
+}
+
+.dashboard-app .health-panel > div > div {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.dashboard-app .health-panel [class*="bg-[#c5ff4a]"],
+.dashboard-app .health-panel [class*="bg-[#bcf540]"] {
+  background: rgba(197, 255, 74, 0.14) !important;
+  color: var(--ref-lime) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+.dashboard-app .restock-panel > div.absolute.inset-0 {
+  background: linear-gradient(145deg, rgba(26, 53, 40, 0.32), rgba(16, 32, 25, 0.54)) !important;
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  backdrop-filter: blur(10px) saturate(125%);
+}
+
+.dashboard-app .restock-panel p {
+  color: rgba(255, 255, 255, 0.72) !important;
+}
+
+.dashboard-app .catalog-toolbar button,
+.dashboard-app .management-header button,
+.dashboard-app .catalog-header button,
+.dashboard-app .management-table-panel button,
+.dashboard-app .catalog-table-panel button,
+.dashboard-app .activity-panel button {
+  background: rgba(255, 255, 255, 0.38) !important;
+  border-color: rgba(255, 255, 255, 0.62) !important;
+  color: var(--ref-ink) !important;
+  box-shadow: 0 8px 20px rgba(35, 57, 46, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+  backdrop-filter: blur(16px) saturate(135%);
+}
+
+.dashboard-app button[class*="bg-[#bcf540]"]:not([class*="hover:bg-[#bcf540]"]),
+.dashboard-app button[class*="bg-[#c5ff4a]"]:not([class*="hover:bg-[#c5ff4a]"]) {
+  background: linear-gradient(145deg, rgba(190, 255, 82, 0.9), rgba(132, 213, 13, 0.82)) !important;
+  border-color: rgba(255, 255, 255, 0.46) !important;
+  color: #1d2b20 !important;
+  box-shadow: 0 10px 24px rgba(104, 161, 16, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.58) !important;
+}
+
+.dashboard-app input:not([type="checkbox"]):not([type="radio"]),
+.dashboard-app select,
+.dashboard-app textarea {
+  background: rgba(255, 255, 255, 0.44) !important;
+  color: var(--ref-ink) !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), 0 6px 16px rgba(35, 57, 46, 0.05) !important;
+  -webkit-backdrop-filter: blur(14px) saturate(135%);
+  backdrop-filter: blur(14px) saturate(135%);
+}
+
+.dashboard-app input::placeholder,
+.dashboard-app textarea::placeholder {
+  color: rgba(24, 35, 29, 0.48) !important;
+}
+
+.dashboard-app select option {
+  background: #edf2ee;
+  color: var(--ref-ink);
+}
+
+.dashboard-app .catalog-table-panel table thead,
+.dashboard-app .management-table-panel table thead,
+.dashboard-app .activity-panel table thead {
+  background: rgba(255, 255, 255, 0.34) !important;
+}
+
+.dashboard-app .catalog-table-panel table tbody tr,
+.dashboard-app .management-table-panel table tbody tr,
+.dashboard-app .activity-panel table tbody tr {
+  background: rgba(255, 255, 255, 0.13) !important;
+  border-color: rgba(255, 255, 255, 0.34) !important;
+}
+
+.dashboard-app .catalog-table-panel table tbody tr:hover,
+.dashboard-app .management-table-panel table tbody tr:hover,
+.dashboard-app .activity-panel table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.34) !important;
+}
+
+.dashboard-app > [class*="fixed"][class*="inset-0"] {
+  background: rgba(21, 37, 29, 0.36) !important;
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
+  backdrop-filter: blur(18px) saturate(135%);
+}
+
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.76), rgba(235, 242, 237, 0.58)) !important;
+  border-color: rgba(255, 255, 255, 0.78) !important;
+  color: var(--ref-ink) !important;
+  box-shadow: 0 30px 80px rgba(26, 45, 35, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.86) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(145%);
+  backdrop-filter: blur(30px) saturate(145%);
+}
+
+.dashboard-app > [class*="fixed"][class*="inset-0"] > div [class*="text-white"] {
+  color: var(--ref-ink) !important;
+}
+
+.login-page .login-topbar {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset !important;
+  -webkit-backdrop-filter: blur(28px) saturate(135%);
+  backdrop-filter: blur(28px) saturate(135%);
+}
+
+.login-page .login-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.06)) !important;
+  border-color: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  -webkit-backdrop-filter: blur(30px) saturate(135%);
+  backdrop-filter: blur(30px) saturate(135%);
+}
+
+.login-page .login-card input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border-bottom-color: rgba(255, 255, 255, 0.28) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+.login-page .login-card button[type="submit"] {
+  background: linear-gradient(145deg, rgba(196, 255, 76, 0.96), rgba(139, 220, 20, 0.86)) !important;
+  box-shadow: 0 14px 34px rgba(139, 220, 20, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.55) !important;
+}
+
+.login-page .absolute.right-0.mt-2 {
+  background: rgba(29, 43, 35, 0.72) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(135%);
+  backdrop-filter: blur(24px) saturate(135%);
+}
+
+div[class*="z-[100]"][class*="bg-[#0a0a0a]"] {
+  background: linear-gradient(145deg, rgba(27, 49, 39, 0.94), rgba(10, 22, 16, 0.9)) !important;
+}
