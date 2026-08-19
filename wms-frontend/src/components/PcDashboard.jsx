@@ -235,6 +235,16 @@ function PcDashboard({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [scans]);
 
+  // Close the predictions modal with the Escape key.
+  React.useEffect(() => {
+    if (!showPredictionsModal) return;
+    const handleEsc = (e) => {
+      if (e.key === 'Escape') setShowPredictionsModal(false);
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [showPredictionsModal]);
+
   const handleExecuteOrder = async (skuCode, quantity) => {
     try {
       // In a real app, this would hit an order execution endpoint
@@ -312,6 +322,15 @@ function PcDashboard({
           {/* Metric 3: Low Stock Alerts */}
           <div 
             onClick={() => predictions.length > 0 && setShowPredictionsModal(true)}
+            onKeyDown={(e) => {
+              if (predictions.length > 0 && (e.key === 'Enter' || e.key === ' ')) {
+                e.preventDefault();
+                setShowPredictionsModal(true);
+              }
+            }}
+            role={predictions.length > 0 ? 'button' : undefined}
+            tabIndex={predictions.length > 0 ? 0 : undefined}
+            aria-label={predictions.length > 0 ? `${t('lowStockAlerts')}: ${stats.lowStockAlerts}` : undefined}
             className={`metric-card metric-card--alerts bg-white/5 backdrop-blur-md p-6 rounded-2xl space-y-4 border transition-all group shadow-sm ${stats.lowStockAlerts > 0 ? 'border-red-500/30 hover:border-red-500 cursor-pointer' : 'border-white/10'}`}
           >
             <div className="flex justify-between items-start">
@@ -468,7 +487,7 @@ function PcDashboard({
 
             {/* Quick Action Card */}
             <div className="restock-panel relative overflow-hidden group rounded-xl p-6 h-48 flex flex-col justify-end border border-white/10 cursor-pointer" onClick={() => setShowPredictionsModal(true)}>
-              <img alt="abstract" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClDYoSRWhGyXZjaJjKtIhvqZyErwAgSQSTuIrk4wjPnvQTjli7GupF7BddMfOW6nv1kAwb_ynWDONUDcac5Q3UKcWKYG4M9BpO7QXjdSfI9kojWYYp_tfxCLfA0s6hvN-V8A_gWsmUyhxJwPn3OVpTjooUTVK5viLcd-dKxKLjMlkmdnfUHbI6O00cVAn186iQdG7asgA95l6SHyVTy1OPyA3jzkPaDIj3oikbHUR_dV8Mq8MqO_Av6BFbX5aHBDB31oieDQDL42nP" />
+              <img alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClDYoSRWhGyXZjaJjKtIhvqZyErwAgSQSTuIrk4wjPnvQTjli7GupF7BddMfOW6nv1kAwb_ynWDONUDcac5Q3UKcWKYG4M9BpO7QXjdSfI9kojWYYp_tfxCLfA0s6hvN-V8A_gWsmUyhxJwPn3OVpTjooUTVK5viLcd-dKxKLjMlkmdnfUHbI6O00cVAn186iQdG7asgA95l6SHyVTy1OPyA3jzkPaDIj3oikbHUR_dV8Mq8MqO_Av6BFbX5aHBDB31oieDQDL42nP" />
               <div className="absolute inset-0 bg-zinc-950/60 backdrop-blur-[2px]"></div>
               <div className="relative z-10 space-y-2">
                 <h4 className="text-white font-bold">{t('predictiveRestock')}</h4>
@@ -612,11 +631,13 @@ function PcDashboard({
             </span>
           </div>
           <div className="flex items-center gap-6">
-            <div className="flex bg-white/5 rounded-lg border border-white/10 p-0.5">
+            <div className="flex bg-white/5 rounded-lg border border-white/10 p-0.5" role="group" aria-label={t('language') || 'Language'}>
               {['en', 'zh', 'ja'].map(lang => (
                 <button 
                   key={lang}
                   onClick={() => setLanguage(lang)} 
+                  aria-pressed={language === lang}
+                  aria-label={{ en: 'English', zh: '中文', ja: '日本語' }[lang]}
                   className={`w-8 h-7 text-[10px] font-bold rounded transition-all ${language === lang ? 'bg-[#bcf540] text-black shadow-lg' : 'text-zinc-500 hover:text-white'}`}
                 >
                   {lang.toUpperCase()}
@@ -632,8 +653,21 @@ function PcDashboard({
               onMouseLeave={() => setShowUserMenu(false)}
             >
               <div 
+                role="button"
+                tabIndex={0}
+                aria-haspopup="menu"
+                aria-expanded={showUserMenu}
+                aria-label={t('userProfile') || 'User menu'}
                 className="flex items-center gap-3 cursor-pointer hover:bg-white/5 px-3 h-10 rounded-xl transition-all border border-transparent hover:border-white/10"
                 onClick={() => setShowUserMenu(!showUserMenu)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setShowUserMenu(v => !v);
+                  } else if (e.key === 'Escape') {
+                    setShowUserMenu(false);
+                  }
+                }}
               >
                 <div className="w-7 h-7 rounded-full border border-[#bcf540]/30 overflow-hidden bg-zinc-900 flex items-center justify-center p-[2px]">
                   {userProfile.avatarUrl ? (
@@ -693,9 +727,11 @@ function PcDashboard({
       {currentView === 'dashboard' && (
         <button 
           onClick={() => setShowQr(true)}
+          aria-label={t('newScan')}
+          title={t('newScan')}
           className="fixed bottom-12 right-12 bg-[#c5ff4a] text-black w-14 h-14 rounded-full shadow-2xl shadow-[#c5ff4a]/20 flex items-center justify-center hover:scale-105 transition-transform z-50"
         >
-          <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>qr_code_scanner</span>
+          <span className="material-symbols-outlined" aria-hidden="true" style={{ fontVariationSettings: "'FILL' 1" }}>qr_code_scanner</span>
         </button>
       )}
 
@@ -704,15 +740,23 @@ function PcDashboard({
 
       {/* Predictions Modal */}
       {showPredictionsModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="bg-[#1e2020] border border-white/10 rounded-2xl p-6 max-w-4xl w-full max-h-[80vh] flex flex-col shadow-2xl">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) setShowPredictionsModal(false); }}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="predictions-modal-title"
+            className="bg-[#1e2020] border border-white/10 rounded-2xl p-6 max-w-4xl w-full max-h-[80vh] flex flex-col shadow-2xl"
+          >
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#c5ff4a]">auto_awesome</span>
+              <h2 id="predictions-modal-title" className="text-xl font-bold text-white flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#c5ff4a]" aria-hidden="true">auto_awesome</span>
                 {t('predictiveRestock')}
               </h2>
-              <button onClick={() => setShowPredictionsModal(false)} className="text-zinc-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors">
-                <span className="material-symbols-outlined">close</span>
+              <button onClick={() => setShowPredictionsModal(false)} aria-label={t('close') || 'Close'} className="text-zinc-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition-colors">
+                <span className="material-symbols-outlined" aria-hidden="true">close</span>
               </button>
             </div>
             

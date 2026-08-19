@@ -3507,3 +3507,52 @@ div[class*="z-[100]"][class*="bg-[#0a0a0a]"] header {
     0 30px 70px rgba(17, 38, 27, 0.12),
     0 60px 124px rgba(17, 38, 27, 0.06) !important;
 }
+
+/* --------------------------------------------------------------------------
+   Accessibility layer
+   Keyboard focus visibility + reduced-motion support. These do NOT alter the
+   default (mouse) visual design; they only add affordances for keyboard and
+   motion-sensitive users.
+---------------------------------------------------------------------------- */
+
+/* Visible keyboard focus. The interface removes native outlines, so keyboard
+   users previously had no focus indicator at all. The dark ring stays visible
+   on the light dashboard, while the acid halo stays visible on the dark login
+   screen, so focus is clear on both surfaces. */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible,
+summary:focus-visible {
+  outline: 2px solid #16181c !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px rgba(197, 255, 74, 0.6) !important;
+  border-radius: 8px;
+}
+
+/* Form fields keep their themed focus but gain a clearer ring for keyboard. */
+.dashboard-app input:focus-visible,
+.dashboard-app select:focus-visible,
+.dashboard-app textarea:focus-visible,
+.login-page input:focus-visible {
+  outline: 2px solid rgba(91, 113, 0, 0.9) !important;
+  outline-offset: 2px !important;
+}
+
+/* Don't show the ring for mouse users on elements made focusable via tabindex. */
+[tabindex]:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Respect the user's reduced-motion preference: neutralise the many entrance,
+   hover-lift and pulse animations without changing the static layout. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
