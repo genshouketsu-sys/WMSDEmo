@@ -1,3 +1,120 @@
+/* ==========================================================================
+   Tailwind CSS v4 entry (migrated from the CDN runtime build).
+   The inline `tailwind.config` that used to live in index.html is ported to
+   the @theme block below so the generated utilities are identical to the CDN
+   output. Tailwind's utilities live in @layer utilities; the custom overrides
+   further down this file are unlayered and therefore still win the cascade.
+   ========================================================================== */
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+/* Class-based dark mode (html has class="dark"), preserved from darkMode:"class". */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* --- Custom color tokens (Material-style palette) --- */
+  --color-tertiary-fixed: #e4e2e1;
+  --color-surface-bright: #37393a;
+  --color-inverse-surface: #e2e2e2;
+  --color-secondary-container: #474746;
+  --color-on-secondary-container: #b7b5b4;
+  --color-on-surface-variant: #c3c9af;
+  --color-error: #ffb4ab;
+  --color-tertiary-container: #e4e2e1;
+  --color-surface-variant: #333535;
+  --color-on-error: #690005;
+  --color-surface-container-low: #1a1c1c;
+  --color-outline-variant: #434935;
+  --color-primary-container: #bcf540;
+  --color-primary: #ffffff;
+  --color-surface-dim: #121414;
+  --color-surface-tint: #a1d820;
+  --color-surface-container-high: #282a2b;
+  --color-on-surface: #e2e2e2;
+  --color-on-primary: #253600;
+  --color-error-container: #93000a;
+  --color-on-secondary-fixed-variant: #474746;
+  --color-inverse-primary: #4a6700;
+  --color-tertiary-fixed-dim: #c8c6c5;
+  --color-on-background: #e2e2e2;
+  --color-on-error-container: #ffdad6;
+  --color-on-secondary-fixed: #1c1b1b;
+  --color-tertiary: #ffffff;
+  --color-primary-fixed-dim: #a1d820;
+  --color-on-primary-fixed-variant: #374e00;
+  --color-surface: #121414;
+  --color-on-tertiary-fixed: #1b1c1c;
+  --color-outline: #8d937c;
+  --color-on-tertiary-fixed-variant: #474746;
+  --color-on-primary-container: #4f6e00;
+  --color-primary-fixed: #bcf540;
+  --color-secondary-fixed: #e5e2e1;
+  --color-on-tertiary-container: #656464;
+  --color-secondary: #c8c6c5;
+  --color-secondary-fixed-dim: #c8c6c5;
+  --color-on-secondary: #313030;
+  --color-surface-container: #1e2020;
+  --color-surface-container-highest: #333535;
+  --color-on-tertiary: #303030;
+  --color-surface-container-lowest: #0c0f0f;
+  --color-inverse-on-surface: #2f3131;
+  --color-background: #121414;
+  --color-on-primary-fixed: #141f00;
+
+  /* --- Border radius ---
+     v4 renamed the radius scale so its `rounded-sm` is 0.25rem, but this design
+     was built against v3 where `rounded-sm` = 0.125rem. Pin it back so the
+     existing markup renders identically. (bare `rounded` is already 0.25rem.) */
+  --radius-sm: 0.125rem;
+
+  /* --- Custom named spacing (coexists with the numeric scale) --- */
+  --spacing-sm: 1rem;
+  --spacing-gutter: 24px;
+  --spacing-xl: 8rem;
+  --spacing-md: 2rem;
+  --spacing-margin: 48px;
+  --spacing-base: 8px;
+  --spacing-xs: 0.5rem;
+  --spacing-lg: 4rem;
+
+  /* --- Custom font families --- */
+  --font-h1: "Space Grotesk";
+  --font-h2: "Space Grotesk";
+  --font-h3: "Space Grotesk";
+  --font-label-sm: "Space Grotesk";
+  --font-body-md: "Inter";
+  --font-body-lg: "Inter";
+
+  /* --- Custom type scale --- */
+  --text-h1: 4.5rem;
+  --text-h1--line-height: 1.1;
+  --text-h1--letter-spacing: -0.02em;
+  --text-h1--font-weight: 600;
+
+  --text-h2: 3rem;
+  --text-h2--line-height: 1.2;
+  --text-h2--letter-spacing: -0.01em;
+  --text-h2--font-weight: 500;
+
+  --text-h3: 2rem;
+  --text-h3--line-height: 1.3;
+  --text-h3--letter-spacing: 0em;
+  --text-h3--font-weight: 500;
+
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.5;
+  --text-body-md--font-weight: 400;
+
+  --text-body-lg: 1.25rem;
+  --text-body-lg--line-height: 1.6;
+  --text-body-lg--font-weight: 400;
+
+  --text-label-sm: 0.75rem;
+  --text-label-sm--line-height: 1;
+  --text-label-sm--letter-spacing: 0.05em;
+  --text-label-sm--font-weight: 500;
+}
+
 body {
   margin: 0;
   padding: 0;

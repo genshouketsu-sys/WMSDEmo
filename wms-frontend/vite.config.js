@@ -3,6 +3,7 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import os from 'os'
 import basicSsl from '@vitejs/plugin-basic-ssl'
+import tailwindcss from '@tailwindcss/vite'
 
 function getLocalIP() {
   const interfaces = os.networkInterfaces()
@@ -21,6 +22,7 @@ export default defineConfig({
     __LOCAL_IP__: JSON.stringify(getLocalIP()),
   },
   plugins: [
+    tailwindcss(),
     react(),
     babel({ presets: [reactCompilerPreset()] }),
     basicSsl()
