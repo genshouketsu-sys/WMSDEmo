@@ -236,7 +236,7 @@ function AdminSettingsModal({ isOpen, onClose }) {
                   onChange={handleChange}
                   className="sr-only peer" 
                 />
-                <div className="w-11 h-6 bg-zinc-800 border border-white/5 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-zinc-400 after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#bcf540] peer-checked:after:bg-black"></div>
+                <div className="w-11 h-6 bg-zinc-300 border border-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:!bg-[rgb(188,245,64)] peer-checked:after:bg-black"></div>
               </label>
             </div>
           </div>
