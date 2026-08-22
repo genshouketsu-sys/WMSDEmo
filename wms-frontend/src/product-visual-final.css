@@ -41,37 +41,7 @@ body {
   backdrop-filter: none !important;
 }
 
-.dashboard-app > aside.dashboard-sidebar nav button {
-  border-radius: 12px !important;
-  color: rgba(246, 249, 246, 0.62) !important;
-  transition: background-color 180ms ease, color 180ms ease, transform 180ms ease !important;
-}
 
-.dashboard-app > aside.dashboard-sidebar nav button:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: #ffffff !important;
-  transform: translateX(2px) !important;
-}
-
-.dashboard-app > aside.dashboard-sidebar nav button[class*="bcf540"] {
-  background: rgba(139, 220, 20, 0.16) !important;
-  border-color: rgba(139, 220, 20, 0.34) !important;
-  color: var(--product-accent) !important;
-  box-shadow: none !important;
-}
-
-.dashboard-app > aside.dashboard-sidebar > div:last-child button {
-  border: 1px solid rgba(255, 255, 255, 0.14) !important;
-  border-radius: 12px !important;
-  background: rgba(255, 255, 255, 0.08) !important;
-  color: var(--product-accent) !important;
-  box-shadow: none !important;
-}
-
-.dashboard-app > aside.dashboard-sidebar > div:last-child button:hover {
-  background: rgba(139, 220, 20, 0.18) !important;
-  color: #ffffff !important;
-}
 
 .dashboard-app > main {
   background: var(--product-surface) !important;
