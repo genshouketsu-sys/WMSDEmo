@@ -37,10 +37,12 @@ public class ScanController {
         // Resolve Product Name and Image
         String productName = "Unknown Product";
         String productImage = "";
+        boolean found = false;
 
         com.wms.wmsbackend.entity.Product localProduct = productMapper.findByBarcode(barcode);
         if (localProduct != null) {
             productName = localProduct.getName();
+            found = true;
             // Assuming localProduct has image or just generic
         } else {
             Map<String, String> yahooData = externalProductService.fetchFromYahoo(barcode);
@@ -72,7 +74,15 @@ public class ScanController {
         Map<String, Object> response = new HashMap<>();
         response.put("success", true);
         response.put("message", "Relay processed with product info");
+        response.put("name", productName);
+        response.put("found", found);
         return ResponseEntity.ok(response);
+    }
+
+    @PermitAll
+    @GetMapping("/ping")
+    public ResponseEntity<Void> ping() {
+        return ResponseEntity.ok().build();
     }
 
     @PermitAll

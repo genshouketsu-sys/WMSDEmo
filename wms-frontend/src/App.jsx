@@ -65,50 +65,72 @@ function App() {
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${wsProtocol}//${window.location.host}/ws/scan?clientId=${clientId}`;
 
-    wsRef.current = new WebSocket(wsUrl);
+    let cancelled = false;
+    let reconnectTimer = null;
+    let reconnectAttempt = 0;
 
-    wsRef.current.onopen = () => {
-      console.log('Connected to WebSocket server');
-      setConnectionStatus('ACTIVE');
+    const connect = () => {
+      const ws = new WebSocket(wsUrl);
+      wsRef.current = ws;
+
+      ws.onopen = () => {
+        console.log('Connected to WebSocket server');
+        reconnectAttempt = 0;
+        setConnectionStatus('ACTIVE');
+      };
+
+      ws.onmessage = (event) => {
+        const rawData = event.data;
+        console.log(`[Global WS] Received raw: ${rawData}`);
+
+        if (rawData === "UNDO_LAST_ACTION") {
+          setScans(prev => prev.slice(1));
+          return;
+        }
+
+        let barcode, resolvedName;
+        try {
+          const data = JSON.parse(rawData);
+          barcode = data.barcode;
+          resolvedName = data.name;
+        } catch (e) {
+          barcode = rawData;
+          const product = productsCache.current.find(p => p.barcode === barcode || p.skuCode === barcode);
+          resolvedName = product ? product.name : 'Unknown Product';
+        }
+
+        const now = new Date();
+        const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
+
+        setScans(prev => [
+          { id: barcode, name: resolvedName, time: timeString, status: 'Verified' },
+          ...prev.slice(0, 9)
+        ]);
+
+        window.dispatchEvent(new CustomEvent('wms-new-scan', { detail: { barcode } }));
+      };
+
+      ws.onclose = () => {
+        console.log('Disconnected from WebSocket server');
+        setConnectionStatus('OFFLINE');
+        if (cancelled) return;
+        // Reconnect with capped exponential backoff so a dropped Wi-Fi link
+        // between phone and PC doesn't silently kill the live scan relay.
+        const delay = Math.min(1000 * 2 ** reconnectAttempt, 15000);
+        reconnectAttempt += 1;
+        reconnectTimer = setTimeout(connect, delay);
+      };
+
+      ws.onerror = () => {
+        ws.close();
+      };
     };
 
-    wsRef.current.onmessage = (event) => {
-      const rawData = event.data;
-      console.log(`[Global WS] Received raw: ${rawData}`);
-
-      if (rawData === "UNDO_LAST_ACTION") {
-        setScans(prev => prev.slice(1));
-        return;
-      }
-      
-      let barcode, resolvedName;
-      try {
-        const data = JSON.parse(rawData);
-        barcode = data.barcode;
-        resolvedName = data.name;
-      } catch (e) {
-        barcode = rawData;
-        const product = productsCache.current.find(p => p.barcode === barcode || p.skuCode === barcode);
-        resolvedName = product ? product.name : 'Unknown Product';
-      }
-
-      const now = new Date();
-      const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
-
-      setScans(prev => [
-        { id: barcode, name: resolvedName, time: timeString, status: 'Verified' },
-        ...prev.slice(0, 9)
-      ]);
-
-      window.dispatchEvent(new CustomEvent('wms-new-scan', { detail: { barcode } }));
-    };
-
-    wsRef.current.onclose = () => {
-      console.log('Disconnected from WebSocket server');
-      setConnectionStatus('OFFLINE');
-    };
+    connect();
 
     return () => {
+      cancelled = true;
+      if (reconnectTimer) clearTimeout(reconnectTimer);
       if (wsRef.current) wsRef.current.close();
     };
   }, []);
