@@ -92,7 +92,7 @@ function FinanceManagement() {
 
       <div className="management-table-panel bg-white/5 backdrop-blur-md rounded-xl border border-white/10 shadow-sm overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="min-w-full text-left border-collapse">
             <thead className="bg-[#0c0f0f]/50 text-zinc-400 text-xs font-semibold uppercase tracking-wider">
               <tr>
                 <th className="px-8 py-5 text-left">{t('txIdentifier')}</th>

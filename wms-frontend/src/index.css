@@ -875,6 +875,9 @@ textarea {
   padding-top: 16px !important;
   padding-bottom: 16px !important;
   font-size: 0.61rem !important;
+  /* Without this, a column narrower than the header label wraps CJK text one
+     character per line instead of just letting the column be as wide as it needs. */
+  white-space: nowrap !important;
 }
 
 .dashboard-app .activity-panel table td,
@@ -2277,6 +2280,29 @@ body {
   padding: 16px 20px !important;
   border-bottom: 1px solid var(--ref-line) !important;
   background: var(--ref-surface-2) !important;
+  /* Title + badge on the left and the action buttons on the right don't have room to
+     share one row once the panel gets narrow -- let the button group drop to its own
+     line instead of squeezing the title into a column so tight the (CJK) text wraps
+     one character per line. */
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+.dashboard-app .activity-panel > div:first-child h3 {
+  white-space: nowrap;
+}
+
+/* The title's own [title, pending-count badge] group and the [Clear, Batch Stock In,
+   filter] button group can each independently be wider than the panel once the outer
+   row above has already wrapped them onto separate lines -- let each group wrap its
+   own children too instead of overflowing past the card edge. */
+.dashboard-app .activity-panel > div:first-child > div {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
+.dashboard-app .activity-panel > div:first-child > div:first-child > span {
+  white-space: nowrap;
 }
 
 .dashboard-app .activity-panel table thead,
@@ -2545,8 +2571,10 @@ body {
   }
 
   .dashboard-app > aside.dashboard-sidebar nav {
+    flex: 1;
     flex-direction: row;
-    overflow-x: auto;
+    justify-content: space-evenly;
+    overflow: visible;
   }
 
   .dashboard-app > aside.dashboard-sidebar nav button {
@@ -2567,12 +2595,33 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .dashboard-app .dashboard-content > section:nth-of-type(2) > div,
+  .dashboard-app .metric-card {
+    min-height: 0 !important;
+    justify-content: flex-start !important;
+    gap: 10px;
+  }
+
   .dashboard-app .dashboard-content > section:nth-of-type(3) {
     grid-template-columns: 1fr;
   }
 
   .dashboard-app .health-panel {
     min-height: 330px;
+  }
+}
+
+/* The activity-panel/health-panel row is genuinely the 2nd <section> in .dashboard-content
+   (the hero above it is a <div>, not a <section>), but the intended 1.68fr/0.72fr split
+   was written against :nth-of-type(3), which matches nothing -- so between the ≤900px
+   mobile stack and Tailwind's xl:col-span-2 (≥1280px) this row fell back to the *other*
+   rule's :nth-of-type(2) selector (meant for the metric cards, 3 equal columns), making
+   the health panel render as wide as the activity panel instead of the intended ~30%.
+   Scoped to exactly that gap so it can't collide with the ≤900 stack or the ≥1280 layout,
+   both of which already work correctly. */
+@media (min-width: 901px) and (max-width: 1279px) {
+  .dashboard-app .dashboard-content > section:nth-of-type(2) {
+    grid-template-columns: minmax(0, 1.68fr) minmax(280px, 0.72fr);
   }
 }
 
@@ -2587,10 +2636,21 @@ body {
     width: 150px;
   }
 
+  /* Breadcrumb label + language switcher + avatar/name/chevron don't all fit on one
+     row at phone width -- both flex children hit their shrink limit (the breadcrumb
+     wraps to two lines, the controls block overflows past the topbar's own edge and
+     gets clipped invisibly by main's overflow:hidden). Drop the username text so the
+     controls block actually fits; the avatar is still tappable to open the same menu. */
+  .dashboard-app .dashboard-topbar > div:last-child > div:last-child button span.text-sm {
+    display: none;
+  }
+
   .dashboard-app .dashboard-content,
   .dashboard-app .management-page,
   .dashboard-app .catalog-page {
-    padding: 18px 16px 34px !important;
+    /* Extra bottom padding: the floating scan button is fixed at bottom:40px/60px tall,
+       so anything less here lets the last card/table row sit underneath it. */
+    padding: 18px 16px 120px !important;
   }
 
   .dashboard-app .dashboard-hero {
