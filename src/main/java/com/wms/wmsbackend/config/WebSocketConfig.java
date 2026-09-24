@@ -13,8 +13,11 @@ public class WebSocketConfig implements WebSocketConfigurer {
     @Autowired
     private ScanWebSocketHandler scanWebSocketHandler;
 
+    @Autowired
+    private ScanHandshakeInterceptor scanHandshakeInterceptor;
+
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(scanWebSocketHandler, "/ws/scan").setAllowedOrigins("*");
+        registry.addHandler(scanWebSocketHandler, "/ws/scan").addInterceptors(scanHandshakeInterceptor).setAllowedOriginPatterns("*");
     }
 }

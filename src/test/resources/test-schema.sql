@@ -1,0 +1,11 @@
+CREATE TABLE product (id bigint AUTO_INCREMENT PRIMARY KEY, sku_code varchar(50) NOT NULL UNIQUE, name varchar(100) NOT NULL, barcode varchar(100) UNIQUE, stock int NOT NULL DEFAULT 0, daily_usage decimal(10,2), lead_time_days int, safety_stock int, create_time timestamp DEFAULT CURRENT_TIMESTAMP, update_time timestamp DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE wms_user (id bigint AUTO_INCREMENT PRIMARY KEY, username varchar(50) NOT NULL UNIQUE, password_hash varchar(255) NOT NULL, role varchar(20) NOT NULL, create_time timestamp DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE wms_scan_log (id bigint AUTO_INCREMENT PRIMARY KEY, barcode varchar(100) NOT NULL, user_id varchar(50), scan_time timestamp DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE inbound_order (id bigint AUTO_INCREMENT PRIMARY KEY, order_num varchar(50) NOT NULL, in_type varchar(20), supplier_name varchar(100), status varchar(20), remark text, create_time timestamp DEFAULT CURRENT_TIMESTAMP, create_user varchar(50));
+CREATE TABLE outbound_order (id bigint AUTO_INCREMENT PRIMARY KEY, order_num varchar(50) NOT NULL, out_type varchar(20), customer_name varchar(100), status varchar(20), remark text, create_time timestamp DEFAULT CURRENT_TIMESTAMP, create_user varchar(50));
+CREATE TABLE finance_bill (id bigint AUTO_INCREMENT PRIMARY KEY, bill_num varchar(50), bill_type varchar(20), amount decimal(18,2), related_order varchar(50), status varchar(20), remark text, create_time timestamp DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE wms_system_lock (id int PRIMARY KEY);
+INSERT INTO wms_system_lock VALUES (1);
+CREATE TABLE order_item (id bigint AUTO_INCREMENT PRIMARY KEY, direction varchar(10) NOT NULL, order_id bigint NOT NULL, product_id bigint NOT NULL, quantity int NOT NULL);
+CREATE TABLE stock_movement (id bigint AUTO_INCREMENT PRIMARY KEY, product_id bigint NOT NULL, quantity int NOT NULL, reference varchar(100) NOT NULL, create_time timestamp DEFAULT CURRENT_TIMESTAMP);
+CREATE TABLE wms_request (request_key varchar(255) PRIMARY KEY, request_hash varchar(64) NOT NULL, response_body longtext, create_time timestamp DEFAULT CURRENT_TIMESTAMP);

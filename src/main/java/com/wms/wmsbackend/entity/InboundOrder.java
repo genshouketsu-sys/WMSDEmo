@@ -3,6 +3,9 @@ package com.wms.wmsbackend.entity;
 import java.time.LocalDateTime;
 
 public class InboundOrder {
+    private java.util.List<OrderItem> items;
+    public java.util.List<OrderItem> getItems() { return items; }
+    public void setItems(java.util.List<OrderItem> items) { this.items=items; }
     private Long id;
     private String orderNum;
     private String inType; // e.g., "Purchase", "Return", "Adjustment"

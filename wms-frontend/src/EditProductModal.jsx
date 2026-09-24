@@ -1,33 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useTranslation } from './i18n/LanguageContext';
+import { useState } from 'react';
+import { useTranslation } from './i18n/useTranslation';
 
 function EditProductModal({ isOpen, onClose, onEdit, initialData }) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState({
-    id: null,
-    skuCode: '',
-    name: '',
-    barcode: '',
-    stock: 0,
-    dailyUsage: 0.0,
-    leadTimeDays: 7,
-    safetyStock: 10
-  });
-
-  useEffect(() => {
-    if (initialData) {
-      setFormData({
-        id: initialData.id,
-        skuCode: initialData.skuCode || '',
-        name: initialData.name || '',
-        barcode: initialData.barcode || '',
-        stock: initialData.stock || 0,
-        dailyUsage: initialData.dailyUsage || 0.0,
-        leadTimeDays: initialData.leadTimeDays || 7,
-        safetyStock: initialData.safetyStock || 10
-      });
-    }
-  }, [initialData]);
+  const [formData, setFormData] = useState(() => ({
+    id: initialData?.id ?? null,
+    skuCode: initialData?.skuCode || '', name: initialData?.name || '',
+    barcode: initialData?.barcode || '', stock: initialData?.stock ?? 0,
+    dailyUsage: initialData?.dailyUsage ?? 0, leadTimeDays: initialData?.leadTimeDays ?? 7,
+    safetyStock: initialData?.safetyStock ?? 10
+  }));
 
   if (!isOpen) return null;
 

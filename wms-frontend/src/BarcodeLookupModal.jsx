@@ -1,21 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
-import { useTranslation } from './i18n/LanguageContext';
+import { useTranslation } from './i18n/useTranslation';
 
 function BarcodeLookupModal({ isOpen, onClose, onBarcodeFound }) {
   const { t } = useTranslation();
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [manualInput, setManualInput] = useState('');
-  const [lastScanned, setLastScanned] = useState(null);
   const [error, setError] = useState(null);
   const scannerRef = useRef(null);
   const inputRef = useRef(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    setTimeout(() => inputRef.current?.focus(), 100);
-    return () => stopCamera();
-  }, [isOpen]);
 
   const stopCamera = () => {
     if (scannerRef.current) {
@@ -24,6 +17,12 @@ function BarcodeLookupModal({ isOpen, onClose, onBarcodeFound }) {
     }
     setIsCameraActive(false);
   };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const focus=setTimeout(() => inputRef.current?.focus(), 100);
+    return () => { clearTimeout(focus); scannerRef.current?.stop().catch(() => {});scannerRef.current=null; };
+  }, [isOpen]);
 
   const startCamera = () => {
     setError(null);
@@ -47,7 +46,6 @@ function BarcodeLookupModal({ isOpen, onClose, onBarcodeFound }) {
         config,
         (text) => {
           if (navigator.vibrate) navigator.vibrate(100);
-          setLastScanned(text);
           onBarcodeFound(text);
           scanner.pause();
           setTimeout(() => {

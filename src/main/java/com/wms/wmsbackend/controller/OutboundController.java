@@ -14,26 +14,30 @@ public class OutboundController {
     @Autowired
     private OutboundMapper outboundMapper;
 
+    @Autowired private com.wms.wmsbackend.service.OrderService orders;
+
     @GetMapping("/list")
     public List<OutboundOrder> list() {
-        return outboundMapper.findAll();
+        var result=outboundMapper.findAll();
+        result.forEach(order -> order.setItems(orders.items(false, order.getId())));
+        return result;
     }
 
     @PostMapping("/create")
-    public int create(@RequestBody OutboundOrder order) {
-        if (order.getStatus() == null) {
-            order.setStatus("Pending");
-        }
-        return outboundMapper.insert(order);
+    public int create(@RequestBody OutboundOrder order, java.security.Principal user) {
+        return orders.createOutbound(order, user.getName());
     }
+
+    @PutMapping("/{id}/items")
+    public int items(@PathVariable Long id, @RequestBody java.util.List<com.wms.wmsbackend.entity.OrderItem> items) { return orders.updateItems(false, id, items); }
 
     @PostMapping("/audit/{id}")
     public int audit(@PathVariable Long id) {
-        return outboundMapper.updateStatus(id, "Audited");
+        return orders.audit(false, id);
     }
 
     @DeleteMapping("/{id}")
     public int delete(@PathVariable Long id) {
-        return outboundMapper.deleteById(id);
+        return orders.deleteOutbound(id);
     }
 }

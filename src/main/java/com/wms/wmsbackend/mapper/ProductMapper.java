@@ -7,6 +7,13 @@ import java.util.List;
 
 @Mapper
 public interface ProductMapper {
+    @Select("SELECT id FROM wms_system_lock WHERE id=1 FOR UPDATE")
+    int lockInventory();
+    @Select("SELECT COUNT(*) FROM product WHERE barcode = #{barcode} AND (#{id} IS NULL OR id != #{id})")
+    int countBarcode(@Param("barcode") String barcode, @Param("id") Long id);
+    @Insert("INSERT INTO stock_movement(product_id,quantity,reference) SELECT id,#{quantity},#{reference} FROM product WHERE barcode=#{barcode}")
+    int recordBarcodeMovement(@Param("barcode") String barcode, @Param("quantity") int quantity, @Param("reference") String reference);
+
     
     // 查询所有商品 (全ての商品をクエリ - 中文解释：查询所有商品)
     @Select("SELECT * FROM product ORDER BY create_time DESC")

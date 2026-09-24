@@ -1,56 +1,44 @@
 package com.wms.wmsbackend.security;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.*;
+import jakarta.servlet.http.*;
+import java.io.IOException;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    @Autowired
-    private JwtUtil jwtUtil;
-
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
-
+    @Autowired private JwtUtil jwtUtil;
+    @Autowired private CustomUserDetailsService userDetailsService;
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
-        
-        final String authorizationHeader = request.getHeader("Authorization");
-
-        String username = null;
-        String jwt = null;
-
-        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
-            jwt = authorizationHeader.substring(7);
-            try {
-                username = jwtUtil.extractUsername(jwt);
-            } catch (Exception e) {
-                logger.error("Could not extract username from token", e);
+        String bearer = request.getHeader("Authorization");
+        String scanToken = request.getHeader("X-Scan-Token");
+        try {
+            if (scanToken != null && List.of("/api/scan/push", "/api/scan/undo").contains(request.getServletPath())) {
+                if (!"scan".equals(jwtUtil.purpose(scanToken))) throw new IllegalArgumentException("Invalid pairing");
+                UserDetails user = userDetailsService.loadUserByUsername(jwtUtil.extractUsername(scanToken));
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                    user, null, List.of(new SimpleGrantedAuthority("ROLE_SCANNER"))));
+            } else if (bearer != null && bearer.startsWith("Bearer ")) {
+                String token = bearer.substring(7);
+                UserDetails user = userDetailsService.loadUserByUsername(jwtUtil.extractUsername(token));
+                if (!jwtUtil.validateToken(token, user)) throw new IllegalArgumentException("Invalid token");
+                SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities()));
             }
+        } catch (Exception invalid) {
+            SecurityContextHolder.clearContext();
+            response.setStatus(401);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"message\":\"登录或扫码配对已过期，请重新连接。\"}");
+            return;
         }
-
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
-            if (jwtUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            }
-        }
-        filterChain.doFilter(request, response);
+        chain.doFilter(request, response);
     }
 }

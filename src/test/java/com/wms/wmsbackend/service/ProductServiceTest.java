@@ -59,6 +59,7 @@ public class ProductServiceTest {
     public void testAddProduct() {
         Product p = new Product();
         p.setName("New Product");
+        p.setSkuCode("NEW-1");
 
         when(productMapper.insert(any(Product.class))).thenReturn(1);
 
@@ -71,6 +72,8 @@ public class ProductServiceTest {
     public void testBatchInbound() {
         List<String> barcodes = Arrays.asList("111", "222", "111");
         
+        when(productMapper.countBarcode(anyString(), isNull())).thenReturn(1);
+        when(productMapper.updateStock(anyString(), eq(1))).thenReturn(1);
         productService.batchInbound(barcodes);
         
         verify(productMapper, times(2)).updateStock("111", 1);
@@ -78,9 +81,19 @@ public class ProductServiceTest {
     }
 
     @Test
+    public void testBatchInboundRejectsUnknownBarcode() {
+        when(productMapper.countBarcode("unknown", null)).thenReturn(0);
+        try { productService.batchInbound(List.of("unknown")); org.junit.Assert.fail("expected rejection"); }
+        catch (IllegalArgumentException expected) { }
+        verify(productMapper, never()).updateStock(anyString(), anyInt());
+    }
+
+    @Test
     public void testUpdateProduct() {
         Product p = new Product();
         p.setId(1L);
+        p.setName("Updated Product");
+        p.setSkuCode("UPDATED-1");
 
         when(productMapper.update(any(Product.class))).thenReturn(1);
 

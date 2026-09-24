@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useTranslation } from '../i18n/LanguageContext';
+import OrderItemsEditor from '../components/OrderItemsEditor';
+import { useTranslation } from '../i18n/useTranslation';
 
-function InboundManagement() {
+function InboundManagement({ isAdmin=false }) {
   const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
+  const [items,setItems]=useState([{productId:'',quantity:1}]);
+  const [editingOrder,setEditingOrder]=useState(null);
+  const [editItems,setEditItems]=useState([]);
   const [newOrder, setNewOrder] = useState({ orderNum: '', inType: 'Purchase', supplierName: '', remark: '' });
 
   const fetchOrders = async () => {
@@ -21,13 +25,16 @@ function InboundManagement() {
   };
 
   useEffect(() => {
-    fetchOrders();
+    const startup=setTimeout(fetchOrders,0);
+    return () => clearTimeout(startup);
   }, []);
 
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('/api/inbound/create', { ...newOrder, createUser: 'admin' });
+      if (!items.length) { alert('请先添加商品明细。'); return; }
+      await axios.post('/api/inbound/create', { ...newOrder, items });
+      setItems([{productId:'',quantity:1}]);
       setShowModal(false);
       setNewOrder({ orderNum: '', inType: 'Purchase', supplierName: '', remark: '' });
       fetchOrders();
@@ -37,12 +44,21 @@ function InboundManagement() {
   };
 
   const handleAudit = async (id) => {
+    const order=orders.find(o => o.id===id);
+    if (!order?.items?.length) { setEditingOrder(order);setEditItems([{productId:'',quantity:1}]);return; }
     try {
       await axios.post(`/api/inbound/audit/${id}`);
       fetchOrders();
-    } catch (error) {
+    } catch {
       alert("Failed to audit order");
     }
+  };
+
+  const handleSaveItems = async e => {
+    e.preventDefault();
+    try { await axios.put('/api/inbound/'+editingOrder.id+'/items',editItems);
+      setEditingOrder(null);fetchOrders(); }
+    catch(error) { alert(error.response?.data?.message || '明细保存失败'); }
   };
 
   return (
@@ -94,7 +110,7 @@ function InboundManagement() {
                     </div>
                   </td>
                   <td className="px-8 py-5">
-                    {order.status === 'Pending' ? (
+                    {order.status === 'Pending' && isAdmin ? (
                       <button 
                         onClick={() => handleAudit(order.id)}
                         className="text-[10px] font-black text-[#bcf540] hover:underline uppercase tracking-widest border border-[#bcf540]/30 px-3 py-1 rounded-sm hover:bg-[#bcf540]/10 transition-all"
@@ -102,7 +118,7 @@ function InboundManagement() {
                         {t('authorize')}
                       </button>
                     ) : (
-                        <span className="text-[10px] font-bold text-zinc-700 uppercase tracking-widest">{t('completed')}</span>
+                        <span className="text-[10px] font-bold text-zinc-700 uppercase tracking-widest">{order.status === 'Pending' ? '待管理员审核' : t('completed')}</span>
                     )}
                   </td>
                 </tr>
@@ -157,6 +173,7 @@ function InboundManagement() {
                     />
                 </div>
               </div>
+              <OrderItemsEditor items={items} onChange={setItems} />
               <div className="pt-6 flex gap-4">
                 <button type="button" onClick={() => setShowModal(false)} className="flex-1 py-4 text-zinc-500 font-black uppercase text-xs tracking-widest hover:text-white transition-colors">{t('abort')}</button>
                 <button type="submit" className="flex-1 py-4 bg-[#bcf540] text-black font-black uppercase text-xs tracking-widest hover:brightness-110 active:scale-95 transition-all">{t('initialize')}</button>
@@ -165,6 +182,13 @@ function InboundManagement() {
           </div>
         </div>
       )}
+      {editingOrder && <div className="management-modal fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 p-6">
+        <form onSubmit={handleSaveItems} className="w-full max-w-lg bg-[#121414] p-8 rounded space-y-6">
+          <h2 className="text-white text-xl font-bold">补录单据明细 · {editingOrder.orderNum}</h2>
+          <OrderItemsEditor items={editItems} onChange={setEditItems}/>
+          <div className="flex justify-end gap-5"><button type="button" onClick={() => setEditingOrder(null)}>取消</button><button type="submit" className="text-[#bcf540]">保存明细</button></div>
+        </form>
+      </div>}
     </div>
   );
 }

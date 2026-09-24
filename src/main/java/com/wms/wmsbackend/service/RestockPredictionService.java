@@ -18,17 +18,19 @@ public class RestockPredictionService {
     @Autowired
     private com.wms.wmsbackend.mapper.ScanLogMapper scanLogMapper;
 
+    @Autowired private org.springframework.jdbc.core.JdbcTemplate jdbc;
+
     public List<RestockSuggestionDto> getRestockSuggestions() {
         List<Product> products = productService.getAllProducts();
         List<RestockSuggestionDto> suggestions = new ArrayList<>();
         
-        // 1. Get recent scan counts (last 14 days) to calculate REAL daily usage
+        // Use actual outbound movements; inbound scans are not customer demand.
         int lookbackDays = 14;
-        List<Map<String, Object>> recentScans = scanLogMapper.getRecentScanCounts(lookbackDays);
+        List<Map<String, Object>> recentScans = jdbc.queryForList("SELECT p.sku_code AS barcode, SUM(-m.quantity) AS scanCount FROM stock_movement m JOIN product p ON p.id=m.product_id WHERE m.quantity<0 AND m.create_time>=? GROUP BY p.sku_code",java.sql.Timestamp.valueOf(java.time.LocalDateTime.now().minusDays(lookbackDays)));
         Map<String, Double> dynamicUsageMap = new java.util.HashMap<>();
         for (Map<String, Object> entry : recentScans) {
             String barcode = (String) entry.get("barcode");
-            Long count = (Long) entry.get("scanCount");
+            Number count = (Number) entry.get("scanCount");
             dynamicUsageMap.put(barcode, count.doubleValue() / lookbackDays);
         }
 
@@ -36,7 +38,7 @@ public class RestockPredictionService {
 
         for (Product product : products) {
             // Priority: Dynamic Usage > Static Daily Usage > 0
-            Double dailyUsage = dynamicUsageMap.getOrDefault(product.getBarcode(), 
+            Double dailyUsage = dynamicUsageMap.getOrDefault(product.getSkuCode(),
                                 product.getDailyUsage() != null ? product.getDailyUsage() : 0.0);
             
             Integer leadTime = product.getLeadTimeDays() != null ? product.getLeadTimeDays() : 7;
@@ -60,9 +62,9 @@ public class RestockPredictionService {
                     int suggestedOrder = (int) Math.ceil(reorderPoint - currentStock + (dailyUsage * 30)); // replenish + 30 days
                     dto.setSuggestedOrderQuantity(Math.max(suggestedOrder, safetyStock * 2));
 
-                    int daysLeft = dailyUsage > 0 ? (int) Math.floor(currentStock / dailyUsage) : 0;
-                    dto.setDaysUntilDepletion(daysLeft);
-                    dto.setPredictedDepletionDate(today.plusDays(daysLeft).toString());
+                    int daysLeft = dailyUsage > 0 ? (int) Math.floor(currentStock / dailyUsage) : Integer.MAX_VALUE;
+                    dto.setDaysUntilDepletion(dailyUsage > 0 ? daysLeft : null);
+                    dto.setPredictedDepletionDate(dailyUsage > 0 ? today.plusDays(daysLeft).toString() : null);
 
                     // Urgency logic
                     if (currentStock == 0) {

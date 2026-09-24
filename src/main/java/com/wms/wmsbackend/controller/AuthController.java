@@ -37,21 +37,11 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired private com.wms.wmsbackend.service.RegistrationService registrationService;
+
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest registerRequest) {
-        if (userMapper.findByUsername(registerRequest.getUsername()) != null) {
-            Map<String, String> error = new HashMap<>();
-            error.put("message", "Username already exists");
-            return ResponseEntity.status(400).body(error);
-        }
-
-        com.wms.wmsbackend.entity.User newUser = new com.wms.wmsbackend.entity.User();
-        newUser.setUsername(registerRequest.getUsername());
-        newUser.setPasswordHash(passwordEncoder.encode(registerRequest.getPassword()));
-        newUser.setRole("ROLE_ADMIN");
-        
-        userMapper.insert(newUser);
-        
+        registrationService.register(registerRequest.getUsername(), registerRequest.getPassword());
         return ResponseEntity.ok("User registered successfully");
     }
 

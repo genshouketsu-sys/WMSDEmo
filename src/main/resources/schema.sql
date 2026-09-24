@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS `product` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `sku_code` varchar(50) NOT NULL UNIQUE,
   `name` varchar(100) NOT NULL,
-  `barcode` varchar(100),
+  `barcode` varchar(100) UNIQUE,
   `stock` int NOT NULL DEFAULT 0,
   `daily_usage` decimal(10,2) DEFAULT 0.0,
   `lead_time_days` int DEFAULT 7,
@@ -60,4 +60,20 @@ CREATE TABLE IF NOT EXISTS `finance_bill` (
     `status` varchar(20),
     `remark` text,
     `create_time` datetime DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS wms_system_lock (id int PRIMARY KEY);
+INSERT IGNORE INTO wms_system_lock (id) VALUES (1);
+CREATE TABLE IF NOT EXISTS order_item (
+ id bigint AUTO_INCREMENT PRIMARY KEY, direction varchar(10) NOT NULL,
+ order_id bigint NOT NULL, product_id bigint NOT NULL, quantity int NOT NULL,
+ INDEX idx_order (direction, order_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS stock_movement (
+ id bigint AUTO_INCREMENT PRIMARY KEY, product_id bigint NOT NULL, quantity int NOT NULL,
+ reference varchar(100) NOT NULL, create_time timestamp DEFAULT CURRENT_TIMESTAMP,
+ INDEX idx_movement (product_id, create_time), FOREIGN KEY (product_id) REFERENCES product(id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+CREATE TABLE IF NOT EXISTS wms_request (
+ request_key varchar(255) PRIMARY KEY, request_hash varchar(64) NOT NULL, response_body longtext,
+ create_time timestamp DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

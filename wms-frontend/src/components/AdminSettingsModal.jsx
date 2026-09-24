@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useTranslation } from '../i18n/LanguageContext';
+import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from '../i18n/useTranslation';
 import axios from 'axios';
 
 function AdminSettingsModal({ isOpen, onClose }) {
@@ -16,17 +16,15 @@ function AdminSettingsModal({ isOpen, onClose }) {
     notificationsEnabled: true,
   });
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (isOpen) {
-      fetchProfile();
-    }
-  }, [isOpen]);
+  const [role,setRole]=useState('');
+  const [users,setUsers]=useState([]);
 
   const fetchProfile = async () => {
     try {
       const response = await axios.get('/api/user/profile');
       const data = response.data;
+      setRole(data.role);
+      if (data.role === "ROLE_ADMIN") { const members=await axios.get("/api/admin/users");setUsers(members.data); }
       setFormData(prev => ({
         ...prev,
         displayName: data.displayName || '',
@@ -36,6 +34,18 @@ function AdminSettingsModal({ isOpen, onClose }) {
     } catch (error) {
       console.error("Failed to fetch profile:", error);
     }
+  };
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const timer=setTimeout(fetchProfile,0);
+    return () => clearTimeout(timer);
+  }, [isOpen]);
+
+  const changeRole = async (id,nextRole) => {
+    try { await axios.put('/api/admin/users/'+id+'/role',{role:nextRole});
+      const members=await axios.get('/api/admin/users');setUsers(members.data);
+    } catch(error) { alert(error.response?.data?.message || '权限更新失败'); }
   };
 
   if (!isOpen) return null;
@@ -221,6 +231,18 @@ function AdminSettingsModal({ isOpen, onClose }) {
                 </div>
               </div>
             </div>
+
+            {role === 'ROLE_ADMIN' && <div className="pt-6 border-t border-white/5 space-y-3">
+              <h3 className="text-xs font-bold text-white">账号权限</h3>
+              <p className="text-xs text-zinc-400">新注册账号默认为操作员。管理员可在这里授予审核和财务权限。</p>
+              {users.map(member => <div key={member.id} className="flex justify-between items-center gap-3 text-sm text-white">
+                <span>{member.displayName || member.username}</span>
+                <select aria-label={member.username+'的权限'} className="bg-[#242826] p-2 rounded" value={member.role}
+                  onChange={e => changeRole(member.id,e.target.value)}>
+                  <option value="ROLE_OPERATOR">操作员</option><option value="ROLE_ADMIN">管理员</option>
+                </select>
+              </div>)}
+            </div>}
 
             {/* Preferences */}
             <div className="pt-6 border-t border-white/5 flex items-center justify-between">

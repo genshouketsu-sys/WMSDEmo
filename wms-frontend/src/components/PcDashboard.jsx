@@ -1,21 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import ProductCatalog from '../ProductCatalog';
 import OutboundManagement from '../pages/OutboundManagement';
 import FinanceManagement from '../pages/FinanceManagement';
 import InboundManagement from '../pages/InboundManagement';
 import ScanQrModal from './ScanQrModal';
 import AdminSettingsModal from './AdminSettingsModal';
-import { useTranslation } from '../i18n/LanguageContext';
+import { useTranslation } from '../i18n/useTranslation';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-function PcDashboard({ currentView, setCurrentView, scans, setScans, connectionStatus }) {
+function PcDashboard({ currentView, setCurrentView, scans, connectionStatus }) {
   const { t, language, setLanguage } = useTranslation();
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState({ username: localStorage.getItem('wms_username') || 'Admin', displayName: '', avatarUrl: '' });
   const [showQr, setShowQr] = useState(false);
-  const [sortColumn, setSortColumn] = useState(null);
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortColumn] = useState(null);
+  const [sortDirection] = useState('asc');
   const [statusFilter, setStatusFilter] = useState('All');
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showAdminSettings, setShowAdminSettings] = useState(false);
@@ -30,18 +30,18 @@ function PcDashboard({ currentView, setCurrentView, scans, setScans, connectionS
   };
 
   const fetchProfile = async () => {
-    try { const r = await axios.get('/api/user/profile'); if (r.data) setUserProfile(r.data); } catch {}
+    try { const r = await axios.get('/api/user/profile'); if (r.data) setUserProfile(r.data); } catch (error) { console.error(error); }
   };
 
   React.useEffect(() => {
-    fetchProfile();
+    const startup=setTimeout(fetchProfile,0);
     window.addEventListener('wms-profile-updated', fetchProfile);
-    return () => window.removeEventListener('wms-profile-updated', fetchProfile);
+    return () => { clearTimeout(startup); window.removeEventListener('wms-profile-updated',fetchProfile); };
   }, []);
 
   React.useEffect(() => {
     const f = async () => {
-      try { const r = await axios.get('/api/dashboard/stats'); if (r.data) setStats({ totalActiveSKUs: Number(r.data.totalActiveSKUs)||0, scansToday: Number(r.data.scansToday)||0, lowStockAlerts: Number(r.data.lowStockAlerts)||0 }); } catch {}
+      try { const r = await axios.get('/api/dashboard/stats'); if (r.data) setStats({ totalActiveSKUs: Number(r.data.totalActiveSKUs)||0, scansToday: Number(r.data.scansToday)||0, lowStockAlerts: Number(r.data.lowStockAlerts)||0 }); } catch (error) { console.error(error); }
     };
     f(); const iv = setInterval(f, 10000); return () => clearInterval(iv);
   }, []);
@@ -56,14 +56,11 @@ function PcDashboard({ currentView, setCurrentView, scans, setScans, connectionS
   }, []);
 
   React.useEffect(() => {
-    const f = async () => { try { const r = await fetch('/api/predictions/restock'); if (r.ok) setPredictions(await r.json()); } catch {} };
+    const f = async () => { try { const r = await axios.get('/api/predictions/restock'); setPredictions(r.data); } catch (error) { console.error(error); } };
     f(); const iv = setInterval(f, 30000); return () => clearInterval(iv);
   }, []);
 
-  React.useEffect(() => {
-    const h = (e) => { if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') handleBatchStockIn(); };
-    window.addEventListener('keydown', h); return () => window.removeEventListener('keydown', h);
-  }, [scans]);
+
 
   const generateLatencyPath = () => {
     const step = 100 / (latencyHistory.length - 1);
@@ -74,24 +71,35 @@ function PcDashboard({ currentView, setCurrentView, scans, setScans, connectionS
     .filter(s => statusFilter === 'All' || s.status === statusFilter)
     .sort((a, b) => { if (!sortColumn) return 0; return (sortDirection === 'asc' ? 1 : -1) * (a[sortColumn]||'').localeCompare(b[sortColumn]||''); });
 
-  const handleDeleteScan = id => setScans && setScans(p => p.filter(s => s.id !== id));
-
-  const handleStockIn = async (id) => {
-    try { const r = await axios.post('/api/products/batch-inbound', [id]); if (r.data?.success) setScans && setScans(p => p.map(s => s.id === id ? {...s, status:'Stocked'} : s)); else alert(t('errorStockIn')||'入库失败'); }
-    catch { alert(t('errorConnection')||'网络错误'); }
+  const notifyScansChanged = () => window.dispatchEvent(new Event('wms-scans-changed'));
+  const showError = error => alert(error.response?.data?.message || '操作失败，请重试。');
+  const handleDeleteScan = async scanId => {
+    try { await axios.post('/api/scan/dismiss',[scanId]); notifyScansChanged(); } catch(error) { showError(error); }
   };
-
-  const handleBatchStockIn = async () => {
-    const ids = scans.filter(s => s.status !== 'Stocked').map(s => s.id);
-    if (!ids.length) return alert(t('noPendingScans')||'没有待处理的扫描');
-    try { const r = await axios.post('/api/products/batch-inbound', ids); if (r.data?.success) setScans && setScans(p => p.map(s => ids.includes(s.id) ? {...s, status:'Stocked'} : s)); else alert(t('errorStockIn')||'批量入库失败'); }
-    catch { alert(t('errorConnection')||'网络错误'); }
+  const handleStockIn = async scanId => {
+    try { await axios.post('/api/scan/stock-in',[scanId]); notifyScansChanged(); } catch(error) { showError(error); }
   };
-
-  const handleClearScans = () => { if (window.confirm(t('confirmClearScans')||'确定要清空所有扫描记录吗？')) setScans && setScans([]); };
-
-  const handleExecuteOrder = async (skuCode) => {
-    try { alert(t('reorderCreated')); setPredictions(p => p.filter(x => x.skuCode !== skuCode)); } catch {}
+  const handleBatchStockIn = useCallback(async () => {
+    const ids=scans.filter(s=>s.status==='Verified').map(s=>s.scanId);
+    if (!ids.length) return alert(t('noPendingScans'));
+    try { await axios.post('/api/scan/stock-in',ids); window.dispatchEvent(new Event('wms-scans-changed')); }
+    catch(error) { alert(error.response?.data?.message || '入库失败，请重试。'); }
+  },[scans,t]);
+  React.useEffect(() => {
+    const h=e=> { if ((e.ctrlKey||e.metaKey) && e.key==='Enter') { e.preventDefault(); handleBatchStockIn(); } };
+    window.addEventListener('keydown',h);return ()=>window.removeEventListener('keydown',h);
+  },[handleBatchStockIn]);
+  const handleClearScans = async () => {
+    const ids = scans.filter(s => s.status === 'Verified' || s.status === 'Stocked').map(s => s.scanId);
+    if (!ids.length) return;
+    if (!window.confirm(t('confirmClearScans'))) return;
+    try { await axios.post('/api/scan/dismiss',ids);notifyScansChanged(); } catch(error) { showError(error); }
+  };
+  const handleExecuteOrder = async skuCode => {
+    try {
+      const response=await axios.post('/api/predictions/restock/'+encodeURIComponent(skuCode));
+      alert(t('reorderCreated')+' '+response.data.orderNum);setPredictions(p=>p.filter(x=>x.skuCode!==skuCode));
+    } catch(error) { showError(error); }
   };
 
   const navItems = [
@@ -105,10 +113,10 @@ function PcDashboard({ currentView, setCurrentView, scans, setScans, connectionS
   const viewLabel = navItems.find(n => n.id === currentView)?.label || t('dashboard');
 
   const renderContent = () => {
-    if (currentView === 'catalog') return <ProductCatalog />;
-    if (currentView === 'outbound') return <OutboundManagement />;
-    if (currentView === 'finance') return <FinanceManagement />;
-    if (currentView === 'inbound') return <InboundManagement />;
+    if (currentView === 'catalog') return <ProductCatalog isAdmin={userProfile.role === "ROLE_ADMIN"} />;
+    if (currentView === 'outbound') return <OutboundManagement isAdmin={userProfile.role === "ROLE_ADMIN"} />;
+    if (currentView === 'finance') return <FinanceManagement isAdmin={userProfile.role === "ROLE_ADMIN"} />;
+    if (currentView === 'inbound') return <InboundManagement isAdmin={userProfile.role === "ROLE_ADMIN"} />;
 
     return (
       <div className="dashboard-content">
@@ -169,7 +177,7 @@ function PcDashboard({ currentView, setCurrentView, scans, setScans, connectionS
               <div className="flex items-center gap-3">
                 <h3 className="text-[0.65rem] font-bold tracking-[0.12em] uppercase" style={{color:'var(--ref-muted,#8a918b)'}}>{t('recentScanningActivity')}</h3>
                 <span className="text-xs font-bold px-2 py-0.5 rounded-full" style={{background:'rgba(197,255,74,0.18)',color:'#3a5c00'}}>
-                  {scans.filter(s=>s.status!=='Stocked').length} PENDING
+                  {scans.filter(s=>s.status==='Verified').length} PENDING
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -189,34 +197,34 @@ function PcDashboard({ currentView, setCurrentView, scans, setScans, connectionS
               <table className="w-full text-left" style={{minWidth:560}}>
                 <thead><tr>
                   <th className="px-6 py-3.5 text-xs font-bold tracking-widest uppercase border-b border-[var(--ref-line,#e5e9e4)]">{t('productName')}</th>
-                  <th className="px-6 py-3.5 text-xs font-bold tracking-widest uppercase border-b border-[var(--ref-line,#e5e9e4)]">{t('skuId')}</th>
+                  <th className="px-6 py-3.5 text-xs font-bold tracking-widest uppercase border-b border-[var(--ref-line,#e5e9e4)]">{t('skuId')} / {t('barcode')}</th>
                   <th className="px-6 py-3.5 text-xs font-bold tracking-widest uppercase border-b border-[var(--ref-line,#e5e9e4)]">{t('timestamp')}</th>
                   <th className="px-6 py-3.5 text-xs font-bold tracking-widest uppercase border-b border-[var(--ref-line,#e5e9e4)]">{t('relayStatus')}</th>
                   <th className="px-6 py-3.5 text-xs font-bold tracking-widest uppercase text-right border-b border-[var(--ref-line,#e5e9e4)]">ACTION</th>
                 </tr></thead>
                 <tbody>
-                  {sortedScans.map((scan,i) => (
-                    <tr key={i} className="group transition-colors">
+                  {sortedScans.map((scan) => (
+                    <tr key={scan.scanId} className="group transition-colors">
                       <td className="px-6 py-3.5 text-sm font-semibold border-b border-[var(--ref-line,#e5e9e4)]">{scan.name||'—'}</td>
-                      <td className="px-6 py-3.5 text-xs font-mono border-b border-[var(--ref-line,#e5e9e4)]" style={{color:'var(--ref-muted,#8a918b)'}}>{scan.id}</td>
-                      <td className="px-6 py-3.5 text-xs font-mono border-b border-[var(--ref-line,#e5e9e4)]" style={{color:'var(--ref-muted,#8a918b)'}}>{scan.time}</td>
+                      <td className="px-6 py-3.5 text-xs font-mono border-b border-[var(--ref-line,#e5e9e4)]" style={{color:'var(--ref-muted,#8a918b)'}}>{scan.skuCode || scan.barcode || '—'}</td>
+                      <td className="px-6 py-3.5 text-xs font-mono border-b border-[var(--ref-line,#e5e9e4)]" style={{color:'var(--ref-muted,#8a918b)'}}>{scan.time && !Number.isNaN(new Date(scan.time).getTime()) ? new Date(scan.time).toLocaleString() : '—'}</td>
                       <td className="px-6 py-3.5 border-b border-[var(--ref-line,#e5e9e4)]">
                         <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold tracking-wider uppercase"
                           style={scan.status==='Verified'?{background:'rgba(197,255,74,0.18)',color:'#3a5c00'}:{background:'rgba(0,0,0,0.05)',color:'#77727c'}}>
                           <span className="w-1.5 h-1.5 rounded-full inline-block" style={{background:scan.status==='Verified'?'#6aaa00':'#aaa'}}></span>
-                          {scan.status}
+                          {scan.status==='History' ? t('scanHistory') : scan.status}
                         </span>
                       </td>
                       <td className="px-6 py-3.5 text-right border-b border-[var(--ref-line,#e5e9e4)]">
                         <div className="flex justify-end items-center gap-2">
-                          {scan.status!=='Stocked' && (
-                            <button onClick={()=>handleStockIn(scan.id)} className="text-[11px] font-bold tracking-wide uppercase px-3 py-1.5 rounded-full transition-colors hover:bg-black/5" style={{border:'1px solid var(--ref-line,#e5e9e4)', color:'var(--ref-ink,#18231d)'}}>
+                          {scan.status==='Verified' && (
+                            <button onClick={()=>handleStockIn(scan.scanId)} className="text-[11px] font-bold tracking-wide uppercase px-3 py-1.5 rounded-full transition-colors hover:bg-black/5" style={{border:'1px solid var(--ref-line,#e5e9e4)', color:'var(--ref-ink,#18231d)'}}>
                               Stock In
                             </button>
                           )}
-                          <button onClick={()=>handleDeleteScan(scan.id)} className="p-1 rounded-full flex items-center justify-center transition-colors hover:bg-red-50 hover:text-red-600 hover:border-red-200" style={{border:'1px solid var(--ref-line,#e5e9e4)', color:'var(--ref-muted,#8a918b)'}}>
+                          {(scan.status==='Verified' || scan.status==='Stocked') && <button onClick={()=>handleDeleteScan(scan.scanId)} className="p-1 rounded-full flex items-center justify-center transition-colors hover:bg-red-50 hover:text-red-600 hover:border-red-200" style={{border:'1px solid var(--ref-line,#e5e9e4)', color:'var(--ref-muted,#8a918b)'}}>
                             <span className="material-symbols-outlined" style={{fontSize:14}}>close</span>
-                          </button>
+                          </button>}
                         </div>
                       </td>
                     </tr>

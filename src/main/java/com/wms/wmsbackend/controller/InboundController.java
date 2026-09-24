@@ -14,21 +14,25 @@ public class InboundController {
     @Autowired
     private InboundMapper inboundMapper;
 
+    @Autowired private com.wms.wmsbackend.service.OrderService orders;
+
     @GetMapping("/list")
     public List<InboundOrder> list() {
-        return inboundMapper.findAll();
+        var result=inboundMapper.findAll();
+        result.forEach(order -> order.setItems(orders.items(true, order.getId())));
+        return result;
     }
 
     @PostMapping("/create")
-    public int create(@RequestBody InboundOrder order) {
-        if (order.getStatus() == null) {
-            order.setStatus("Pending");
-        }
-        return inboundMapper.insert(order);
+    public int create(@RequestBody InboundOrder order, java.security.Principal user) {
+        return orders.createInbound(order, user.getName());
     }
+
+    @PutMapping("/{id}/items")
+    public int items(@PathVariable Long id, @RequestBody java.util.List<com.wms.wmsbackend.entity.OrderItem> items) { return orders.updateItems(true, id, items); }
 
     @PostMapping("/audit/{id}")
     public int audit(@PathVariable Long id) {
-        return inboundMapper.updateStatus(id, "Audited");
+        return orders.audit(true, id);
     }
 }

@@ -8,6 +8,11 @@ import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface UserMapper {
+    @Select("SELECT id FROM wms_system_lock WHERE id=1 FOR UPDATE")
+    int lockRegistration();
+    @Select("SELECT COUNT(*) FROM wms_user")
+    int countUsers();
+
 
     @Select("SELECT * FROM wms_user WHERE username = #{username}")
     User findByUsername(String username);

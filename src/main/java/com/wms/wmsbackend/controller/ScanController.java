@@ -1,116 +1,40 @@
 package com.wms.wmsbackend.controller;
-
+import com.wms.wmsbackend.annotation.Idempotent;
 import com.wms.wmsbackend.config.ScanWebSocketHandler;
-import jakarta.annotation.security.PermitAll;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.wms.wmsbackend.security.JwtUtil;
+import com.wms.wmsbackend.service.ScanService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
+import java.security.Principal;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/scan")
-@CrossOrigin(origins = "*") 
 public class ScanController {
-
-    @Autowired
-    private ScanWebSocketHandler scanWebSocketHandler;
-
-    @Autowired
-    private com.wms.wmsbackend.mapper.ScanLogMapper scanLogMapper;
-
-    @Autowired
-    private com.wms.wmsbackend.mapper.ProductMapper productMapper;
-
-    @Autowired
-    private com.wms.wmsbackend.service.ExternalProductService externalProductService;
-
-    @PermitAll
+    private final ScanService scans;
+    private final JwtUtil jwt;
+    private final ScanWebSocketHandler sockets;
+    public ScanController(ScanService scans, JwtUtil jwt, ScanWebSocketHandler sockets) { this.scans=scans;this.jwt=jwt;this.sockets=sockets; }
+    private void changed(String user) { sockets.sendMessageToClient("pc_"+user,"{\"event\":\"SCANS_CHANGED\"}"); }
+    @GetMapping("/pairing")
+    public Map<String,String> pairing(Principal user) { return Map.of("token",jwt.scanToken(user.getName())); }
     @PostMapping("/push")
-    public ResponseEntity<Map<String, Object>> pushScanData(@RequestBody Map<String, String> payload) {
-        String barcode = payload.get("barcode");
-        String userId = payload.get("userId");
-        System.out.println("Received scan push: barcode=" + barcode + ", userId=" + userId);
-
-        // Resolve Product Name and Image
-        String productName = "Unknown Product";
-        String productImage = "";
-        boolean found = false;
-
-        com.wms.wmsbackend.entity.Product localProduct = productMapper.findByBarcode(barcode);
-        if (localProduct != null) {
-            productName = localProduct.getName();
-            found = true;
-            // Assuming localProduct has image or just generic
-        } else {
-            Map<String, String> yahooData = externalProductService.fetchFromYahoo(barcode);
-            productName = yahooData.get("name");
-            productImage = yahooData.get("image");
-        }
-
-        try {
-            scanLogMapper.insert(barcode, userId);
-        } catch (Exception e) {
-            System.err.println("Failed to log scan: " + e.getMessage());
-        }
-
-        String targetClientId = "pc_" + userId;
-        
-        // Send JSON payload to PC
-        Map<String, String> wsMessage = new HashMap<>();
-        wsMessage.put("barcode", barcode);
-        wsMessage.put("name", productName);
-        wsMessage.put("image", productImage);
-        
-        try {
-            String jsonMessage = new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(wsMessage);
-            scanWebSocketHandler.sendMessageToClient(targetClientId, jsonMessage);
-        } catch (Exception e) {
-            scanWebSocketHandler.sendMessageToClient(targetClientId, barcode); // Fallback
-        }
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("success", true);
-        response.put("message", "Relay processed with product info");
-        response.put("name", productName);
-        response.put("found", found);
-        return ResponseEntity.ok(response);
+    public Map<String,Object> push(@RequestBody Map<String,String> body, Principal user) {
+        var result=scans.push(user.getName(),body.get("barcode"),body.get("requestId"));
+        changed(user.getName());return result;
     }
-
-    @PermitAll
-    @GetMapping("/ping")
-    public ResponseEntity<Void> ping() {
-        return ResponseEntity.ok().build();
-    }
-
-    @PermitAll
+    @GetMapping("/ping") public ResponseEntity<Void> ping() { return ResponseEntity.ok().build(); }
     @PostMapping("/undo")
-    public ResponseEntity<Map<String, Object>> undoScanData(@RequestBody Map<String, String> payload) {
-        String userId = payload.get("userId");
-        Map<String, Object> response = new HashMap<>();
-        
-        Long latestId = scanLogMapper.findLatestIdByUserId(userId);
-        if (latestId != null) {
-            scanLogMapper.deleteById(latestId);
-            
-            // Notify PC client to undo
-            String targetClientId = "pc_" + userId;
-            scanWebSocketHandler.sendMessageToClient(targetClientId, "UNDO_LAST_ACTION");
-            
-            response.put("success", true);
-            response.put("message", "Last scan undone");
-        } else {
-            response.put("success", false);
-            response.put("message", "No logs to undo");
-        }
-        return ResponseEntity.ok(response);
+    public Map<String,Object> undo(Principal user) {
+        boolean result=scans.undo(user.getName());changed(user.getName());return Map.of("success",result);
     }
-
-    @PermitAll
-    @GetMapping("/logs")
-    public List<Map<String, Object>> getScanLogs() {
-        return scanLogMapper.findAllLogs();
+    @GetMapping("/logs") public List<Map<String,Object>> logs(Principal user) { return scans.logs(user.getName()); }
+    @PostMapping("/stock-in")
+    public Map<String,Object> stockIn(@RequestBody List<Long> ids, Principal user) {
+        scans.stockIn(user.getName(),ids);changed(user.getName());return Map.of("success",true);
+    }
+    @PostMapping("/dismiss")
+    public Map<String,Object> dismiss(@RequestBody List<Long> ids, Principal user) {
+        scans.dismiss(user.getName(),ids);changed(user.getName());return Map.of("success",true);
     }
 }

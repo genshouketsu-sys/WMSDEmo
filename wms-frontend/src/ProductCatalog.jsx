@@ -1,11 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
 import AddProductModal from './AddProductModal';
 import EditProductModal from './EditProductModal';
 import BarcodeLookupModal from './BarcodeLookupModal';
-import { useTranslation } from './i18n/LanguageContext';
+import { useTranslation } from './i18n/useTranslation';
 
-function ProductCatalog() {
+function ProductCatalog({ isAdmin=false }) {
   const { t } = useTranslation();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -24,11 +24,7 @@ function ProductCatalog() {
   const [highlightedBarcode, setHighlightedBarcode] = useState(null);
   const highlightRef = useRef(null);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get('/api/products');
@@ -49,7 +45,9 @@ function ProductCatalog() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => { const timer=setTimeout(fetchProducts,0);return () => clearTimeout(timer); },[fetchProducts]);
 
   const handleAddProduct = async (newProductData) => {
     try {
@@ -149,7 +147,7 @@ function ProductCatalog() {
     const matchesSearch = (p.skuCode && p.skuCode.toLowerCase().includes(searchTerm.toLowerCase())) ||
                           (p.name && p.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
                           (p.barcode && p.barcode.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesStock = stockFilter === 'all' ? true : (stockFilter === 'low' ? p.stock < 20 : true);
+    const matchesStock = stockFilter === 'all' ? true : (stockFilter === 'low' ? p.stock <= (p.safetyStock ?? 10) : true);
     return matchesSearch && matchesStock;
   });
 
@@ -158,10 +156,6 @@ function ProductCatalog() {
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
-
-  useEffect(() => {
-    setCurrentPage(1); // Reset to page 1 on filter/search change
-  }, [searchTerm, stockFilter]);
 
   const formatDateTime = (timeInput) => {
     if (!timeInput) return '-';
@@ -208,7 +202,7 @@ function ProductCatalog() {
                 placeholder={t('searchPlaceholder')}
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value);setCurrentPage(1); }}
               />
             </div>
             <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -220,7 +214,7 @@ function ProductCatalog() {
                 {t('scan')}
               </button>
               <button 
-                onClick={() => setStockFilter(prev => prev === 'all' ? 'low' : 'all')}
+                onClick={() => { setStockFilter(prev => prev === 'all' ? 'low' : 'all');setCurrentPage(1); }}
                 className={`flex items-center gap-2 px-4 h-[44px] border rounded-lg text-sm font-medium transition-colors w-full sm:w-auto justify-center ${stockFilter === 'low' ? 'border-[#c5ff4a] text-[#c5ff4a] bg-[#c5ff4a]/10' : 'border-white/10 text-white hover:bg-white/5'}`}
               >
                 <span className="material-symbols-outlined text-[18px]">filter_list</span>
@@ -331,7 +325,7 @@ function ProductCatalog() {
                             <span className="material-symbols-outlined text-sm">edit</span>
                           </button>
                           <button 
-                            onClick={() => handleDelete(product.id)}
+                            onClick={() => handleDelete(product.id)} disabled={!isAdmin} title={!isAdmin ? "仅管理员可删除" : "删除商品"}
                             className="text-zinc-500 hover:text-red-500 transition-colors p-1"
                           >
                             <span className="material-symbols-outlined text-sm">delete</span>
@@ -374,12 +368,12 @@ function ProductCatalog() {
         onAdd={handleAddProduct} 
       />
 
-      <EditProductModal
+      {isEditModalOpen && <EditProductModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         onEdit={handleEditSubmit}
         initialData={productToEdit}
-      />
+      />}
 
       <BarcodeLookupModal
         isOpen={isScanModalOpen}

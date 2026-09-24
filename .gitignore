@@ -22,3 +22,8 @@
 /Git.WMS.Web/Git.WMS.ThreePart.Web/bin
 /Git.WMS.Web/Gti.WMS.Barcode.Web/obj
 /Git.WMS.Web/Gti.WMS.Barcode.Web/bin
+
+/target/
+/.wms/
+/.env
+/docker/certs/

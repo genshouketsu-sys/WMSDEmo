@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useTranslation } from '../i18n/LanguageContext';
+import { useTranslation } from '../i18n/useTranslation';
 
-function FinanceManagement() {
+function FinanceManagement({ isAdmin=false }) {
   const { t } = useTranslation();
   const [bills, setBills] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,15 +25,15 @@ function FinanceManagement() {
     try {
       await axios.delete(`/api/finance/${id}`);
       fetchBills();
-    } catch (error) {
+    } catch {
       alert("Failed to delete transaction");
     }
   };
 
   useEffect(() => {
-    fetchBills();
+    const startup=setTimeout(fetchBills,0);
     const interval = setInterval(fetchBills, 10000);
-    return () => clearInterval(interval);
+    return () => { clearTimeout(startup);clearInterval(interval); };
   }, []);
 
   const handleCreate = async (e) => {
@@ -65,7 +65,7 @@ function FinanceManagement() {
           </div>
         </div>
         <button 
-          onClick={() => setShowModal(true)}
+          onClick={() => setShowModal(true)} disabled={!isAdmin} title={!isAdmin ? "仅管理员可记账" : "新增记录"}
           className="h-[44px] px-8 rounded-sm bg-[#bcf540] text-black font-black text-xs uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all shadow-[0_0_30px_rgba(188,245,64,0.2)]"
         >
           {t('addTransaction')}
@@ -123,7 +123,7 @@ function FinanceManagement() {
                           {bill.status === 'Pending' ? t('pending') : bill.status === 'Completed' ? t('completed') : bill.status}
                       </span>
                       <button 
-                        onClick={() => handleDelete(bill.id)}
+                        onClick={() => handleDelete(bill.id)} disabled={!isAdmin}
                         className="text-zinc-600 hover:text-red-500 transition-colors p-1"
                         title={t('delete')}
                       >

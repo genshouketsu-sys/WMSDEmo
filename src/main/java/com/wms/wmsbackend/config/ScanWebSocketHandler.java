@@ -48,10 +48,10 @@ public class ScanWebSocketHandler extends TextWebSocketHandler {
         if (clientSessions != null && !clientSessions.isEmpty()) {
             System.out.println("Pushing message to clientId: " + clientId + " (Sessions: " + clientSessions.size() + ")");
             for (WebSocketSession session : clientSessions) {
-                if (session.isOpen()) {
+                if (session.isOpen() && ((Number) session.getAttributes().get("expiresAt")).longValue() > System.currentTimeMillis()) {
                     try {
-                        session.sendMessage(new TextMessage(message));
-                    } catch (IOException e) {
+                        synchronized (session) { session.sendMessage(new TextMessage(message)); }
+                    } catch (IOException | IllegalStateException e) {
                         System.err.println("Failed to send message to session " + session.getId() + ": " + e.getMessage());
                     }
                 } else {
@@ -64,14 +64,6 @@ public class ScanWebSocketHandler extends TextWebSocketHandler {
     }
 
     private String getClientId(WebSocketSession session) {
-        String query = session.getUri().getQuery();
-        if (query == null) return null;
-        for (String param : query.split("&")) {
-            String[] pair = param.split("=");
-            if (pair.length == 2 && "clientId".equals(pair[0])) {
-                return pair[1];
-            }
-        }
-        return null;
+        return (String) session.getAttributes().get("clientId");
     }
 }

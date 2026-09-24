@@ -1,8 +1,8 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { BrowserMultiFormatReader } from '@zxing/browser';
 import { BarcodeFormat, DecodeHintType } from '@zxing/library';
-import { useTranslation } from '../i18n/LanguageContext';
+import { useTranslation } from '../i18n/useTranslation';
 
 const BARCODE_FORMATS = [
   BarcodeFormat.EAN_13, BarcodeFormat.EAN_8,
@@ -21,7 +21,9 @@ const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 function MobileScanner({ onClose }) {
   const { t } = useTranslation();
   const queryParams = new URLSearchParams(window.location.search);
-  const userId = queryParams.get('userId') || localStorage.getItem('wms_username') || '1';
+  const pairingToken = queryParams.get('pairing') || sessionStorage.getItem('wms_scan_pairing');
+  useEffect(() => { if (window.location.search.includes('pairing=')) { sessionStorage.setItem('wms_scan_pairing', pairingToken); window.history.replaceState(null, '', window.location.pathname); } }, [pairingToken]);
+  const scanConfig = pairingToken ? { headers: { 'X-Scan-Token': pairingToken } } : {};
 
   const [scanResult, setScanResult] = useState(null);
   const [scanName, setScanName] = useState(null);
@@ -65,7 +67,7 @@ function MobileScanner({ onClose }) {
     setScanName(null);
 
     try {
-      const response = await axios.post(`/api/scan/push`, { barcode: code, userId: userId });
+      const response = await axios.post(`/api/scan/push`, { barcode: code, requestId: crypto.randomUUID() }, scanConfig);
       const found = !!response.data?.found;
       setScanName(response.data?.name || null);
       setScanStatus(found ? 'success' : 'unknown');
@@ -91,7 +93,7 @@ function MobileScanner({ onClose }) {
 
   const handleUndo = async () => {
     try {
-      const response = await axios.post(`/api/scan/undo`, { userId: userId });
+      const response = await axios.post(`/api/scan/undo`, {}, scanConfig);
       if (response.data.success) {
         setUndoStatus('SUCCESS');
         if (navigator.vibrate) navigator.vibrate([50, 50]);

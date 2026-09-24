@@ -1,15 +1,24 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { QRCodeSVG } from 'qrcode.react';
-import { useTranslation } from '../i18n/LanguageContext';
+import { useTranslation } from '../i18n/useTranslation';
 
 function ScanQrModal({ isOpen, onClose }) {
   const { t } = useTranslation();
+  const [lanUrl,setLanUrl]=useState('');
+  const [error,setError]=useState('');
+  useEffect(() => {
+    if (!isOpen) return;
+    let cancelled=false;
+    axios.get('/api/scan/pairing').then(response => {
+      const url=new URL('/scanner',window.location.href);
+      if (import.meta.env.DEV && (url.hostname==='localhost' || url.hostname==='127.0.0.1')) url.hostname=__LOCAL_IP__;
+      url.searchParams.set('pairing',response.data.token);
+      if (!cancelled) { setLanUrl(url.toString());setError(''); }
+    }).catch(() => { if (!cancelled) setError('无法生成扫码连接，请检查登录状态。'); });
+    return () => { cancelled=true; };
+  },[isOpen]);
   if (!isOpen) return null;
-
-  // __LOCAL_IP__ 由 vite.config.js 在构建时注入，值为本机局域网 IP
-  const username = localStorage.getItem('wms_username') || '1';
-  const lanUrl = `https://${__LOCAL_IP__}:5173/scanner?userId=${username}`;
-
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onClose}>
       <div 
@@ -37,20 +46,20 @@ function ScanQrModal({ isOpen, onClose }) {
 
         {/* QR Code */}
         <div className="bg-white rounded-xl p-4 mx-auto w-fit mb-6">
-          <QRCodeSVG
+          {lanUrl ? <QRCodeSVG
             value={lanUrl}
             size={200}
             bgColor="#ffffff"
             fgColor="#121414"
             level="M"
             includeMargin={false}
-          />
+          /> : <p className="text-black p-12">{error || "连接中…"}</p>}
         </div>
 
         {/* URL Display */}
         <div className="bg-[#0c0f0f] border border-white/10 rounded-lg p-3 mb-4">
           <p className="text-[10px] uppercase tracking-widest text-zinc-500 mb-1 font-medium">{t('connectionUrl')}</p>
-          <p className="text-[#bcf540] font-mono text-sm break-all select-all">{lanUrl}</p>
+          <p className="text-[#bcf540] font-mono text-xs break-all select-all">{lanUrl ? new URL(lanUrl).origin + "/scanner" : error}</p>
         </div>
 
         {/* Instructions */}

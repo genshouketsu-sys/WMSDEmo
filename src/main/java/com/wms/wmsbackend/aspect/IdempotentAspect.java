@@ -1,34 +1,49 @@
 package com.wms.wmsbackend.aspect;
-
 import com.wms.wmsbackend.annotation.Idempotent;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import org.aspectj.lang.annotation.*;
+import org.springframework.http.*;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import java.util.concurrent.TimeUnit;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.context.request.*;
 
 @Aspect
 @Component
 public class IdempotentAspect {
-
-    // 使用本地 Map 替代 Redis 解决本地无 Redis 服务的问题
-    private static final java.util.concurrent.ConcurrentHashMap<String, Long> localCache = new java.util.concurrent.ConcurrentHashMap<>();
-
+    private final JdbcTemplate jdbc;
+    private final TransactionTemplate transactions;
+    private final ObjectMapper json;
+    public IdempotentAspect(JdbcTemplate jdbc, org.springframework.transaction.PlatformTransactionManager manager, ObjectMapper json) {
+        this.jdbc=jdbc; this.transactions=new TransactionTemplate(manager); this.json=json;
+    }
     @Around("@annotation(idempotent)")
-    public Object checkIdempotent(ProceedingJoinPoint joinPoint, Idempotent idempotent) throws Throwable {
-        String key = "idempotent:" + joinPoint.getSignature().toShortString();
-        long now = System.currentTimeMillis();
-        
-        // 清理过期数据
-        localCache.entrySet().removeIf(entry -> entry.getValue() < now);
-
-        // 如果存在且未过期，说明是重复提交
-        if (localCache.putIfAbsent(key, now + idempotent.timeout()) != null) {
-            throw new RuntimeException(idempotent.message());
-        }
-        
-        return joinPoint.proceed();
+    public Object checkIdempotent(ProceedingJoinPoint call, Idempotent idempotent) throws Throwable {
+        HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+        String key=req.getHeader("Idempotency-Key");
+        // Existing API callers remain compatible; new clients use an explicit operation key.
+        if (key == null || key.isBlank()) return call.proceed();
+        if (!key.matches("[a-zA-Z0-9_-]{1,80}")) throw new IllegalArgumentException("Invalid Idempotency-Key");
+        String requestKey=req.getUserPrincipal().getName()+":"+req.getRequestURI()+":"+key;
+        String hash=java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256")
+            .digest(json.writeValueAsBytes(call.getArgs())));
+        return transactions.execute(status -> {
+            jdbc.queryForObject("SELECT id FROM wms_system_lock WHERE id=1 FOR UPDATE", Integer.class);
+            var existing=jdbc.queryForList("SELECT request_hash, response_body FROM wms_request WHERE request_key=?",requestKey);
+            if (!existing.isEmpty()) {
+                if (!hash.equals(existing.get(0).get("request_hash"))) throw new ResponseStatusException(HttpStatus.CONFLICT,"同一操作标识不能用于不同内容。");
+                return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON).body(existing.get(0).get("response_body"));
+            }
+            try {
+                Object result=call.proceed();
+                Object body=result instanceof ResponseEntity<?> response ? response.getBody() : result;
+                jdbc.update("INSERT INTO wms_request(request_key,request_hash,response_body) VALUES(?,?,?)",requestKey,hash,json.writeValueAsString(body));
+                return result;
+            } catch (RuntimeException | Error e) { throw e; }
+            catch (Throwable e) { throw new IllegalStateException(e); }
+        });
     }
 }

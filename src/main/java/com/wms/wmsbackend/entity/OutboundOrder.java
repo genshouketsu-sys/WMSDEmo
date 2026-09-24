@@ -3,6 +3,9 @@ package com.wms.wmsbackend.entity;
 import java.time.LocalDateTime;
 
 public class OutboundOrder {
+    private java.util.List<OrderItem> items;
+    public java.util.List<OrderItem> getItems() { return items; }
+    public void setItems(java.util.List<OrderItem> items) { this.items=items; }
     private Long id;
     private String orderNum;
     private String outType; // e.g., "Sale", "Transfer"

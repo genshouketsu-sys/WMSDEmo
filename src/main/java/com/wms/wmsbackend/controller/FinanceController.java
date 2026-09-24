@@ -14,6 +14,8 @@ public class FinanceController {
     @Autowired
     private FinanceMapper financeMapper;
 
+    @Autowired private com.wms.wmsbackend.service.FinanceService service;
+
     @GetMapping("/bills")
     public List<FinanceBill> getBills() {
         return financeMapper.findAll();
@@ -21,10 +23,7 @@ public class FinanceController {
 
     @PostMapping("/create")
     public int create(@RequestBody FinanceBill bill) {
-        if (bill.getStatus() == null) {
-            bill.setStatus("Unpaid");
-        }
-        return financeMapper.insert(bill);
+        return service.create(bill);
     }
 
     @DeleteMapping("/{id}")
