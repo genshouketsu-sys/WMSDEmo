@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import PcDashboard from './components/PcDashboard';
 import MobileScanner from './components/MobileScanner';
@@ -33,7 +33,11 @@ axios.interceptors.response.use(
   }
 );
 
-function App() {
+function ScanApp() {
+  // Observe navigation after login so the scan connection sees the new session.
+  useLocation();
+  const token = localStorage.getItem('wms_token');
+  const username = localStorage.getItem('wms_username') || '1';
   const [currentView, setCurrentView] = useState('dashboard');
   const [scans, setScans] = useState([
     { id: 'PRD-X92-BLA', name: 'Black T-Shirt', time: '14:02:11', status: 'Verified' },
@@ -47,20 +51,17 @@ function App() {
 
   // Fetch products for name lookup
   useEffect(() => {
-    const token = localStorage.getItem('wms_token');
     if (token) {
       axios.get('/api/products')
         .then(res => { productsCache.current = res.data; })
         .catch(() => {});
     }
-  }, []);
+  }, [token]);
 
   // WebSocket for receiving scans (Dashboard logic)
   useEffect(() => {
-    const token = localStorage.getItem('wms_token');
     if (!token) return;
 
-    const username = localStorage.getItem('wms_username') || '1';
     const clientId = `pc_${username}`;
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${wsProtocol}//${window.location.host}/ws/scan?clientId=${clientId}`;
@@ -74,12 +75,14 @@ function App() {
       wsRef.current = ws;
 
       ws.onopen = () => {
+        if (cancelled) return;
         console.log('Connected to WebSocket server');
         reconnectAttempt = 0;
         setConnectionStatus('ACTIVE');
       };
 
       ws.onmessage = (event) => {
+        if (cancelled) return;
         const rawData = event.data;
         console.log(`[Global WS] Received raw: ${rawData}`);
 
@@ -111,9 +114,9 @@ function App() {
       };
 
       ws.onclose = () => {
+        if (cancelled) return;
         console.log('Disconnected from WebSocket server');
         setConnectionStatus('OFFLINE');
-        if (cancelled) return;
         // Reconnect with capped exponential backoff so a dropped Wi-Fi link
         // between phone and PC doesn't silently kill the live scan relay.
         const delay = Math.min(1000 * 2 ** reconnectAttempt, 15000);
@@ -133,10 +136,9 @@ function App() {
       if (reconnectTimer) clearTimeout(reconnectTimer);
       if (wsRef.current) wsRef.current.close();
     };
-  }, []);
+  }, [token, username]);
 
   return (
-    <Router>
       <Routes>
         {/* Public Login Route */}
         <Route path="/login" element={<LoginPage />} />
@@ -166,9 +168,9 @@ function App() {
               <PcDashboard 
                 currentView="catalog"
                 setCurrentView={setCurrentView}
-                scans={[]}
-                setScans={() => {}}
-                connectionStatus="ACTIVE"
+                scans={scans}
+                setScans={setScans}
+                connectionStatus={connectionStatus}
               />
             </ProtectedRoute>
           } 
@@ -188,9 +190,9 @@ function App() {
               <PcDashboard 
                 currentView="outbound"
                 setCurrentView={setCurrentView}
-                scans={[]}
-                setScans={() => {}}
-                connectionStatus="ACTIVE"
+                scans={scans}
+                setScans={setScans}
+                connectionStatus={connectionStatus}
               />
             </ProtectedRoute>
           } 
@@ -204,9 +206,9 @@ function App() {
               <PcDashboard 
                 currentView="finance"
                 setCurrentView={setCurrentView}
-                scans={[]}
-                setScans={() => {}}
-                connectionStatus="ACTIVE"
+                scans={scans}
+                setScans={setScans}
+                connectionStatus={connectionStatus}
               />
             </ProtectedRoute>
           } 
@@ -220,9 +222,9 @@ function App() {
               <PcDashboard 
                 currentView="inbound"
                 setCurrentView={setCurrentView}
-                scans={[]}
-                setScans={() => {}}
-                connectionStatus="ACTIVE"
+                scans={scans}
+                setScans={setScans}
+                connectionStatus={connectionStatus}
               />
             </ProtectedRoute>
           } 
@@ -231,6 +233,13 @@ function App() {
         {/* Fallback to Dashboard */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <ScanApp />
     </Router>
   );
 }

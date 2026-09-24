@@ -1322,3 +1322,35 @@ INSERT IGNORE INTO product (sku_code, name, barcode, stock, daily_usage, lead_ti
 INSERT IGNORE INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time) VALUES ('COF-3145-32', 'ポッカサッポロ アロマックス プレミアムブラック 440ml', '4930412924595', 25, 18.49, 6, 54, NOW());
 INSERT IGNORE INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time) VALUES ('COF-8359-37', 'ポッカサッポロ アロマックス 東海プレミアム 370ml', '4969729398970', 238, 9.0, 2, 59, NOW());
 INSERT IGNORE INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time) VALUES ('COF-1240-94', 'ポッカサッポロ アロマックス ファンタジスタ 500ml', '4931757112517', 94, 16.71, 3, 25, NOW());
+
+-- 7-Eleven Japan bottled coffee: verified single-bottle JAN codes, initial stock 0.
+-- Skip existing barcodes or SKUs without changing their product details or stock.
+-- https://products.suntory.co.jp/d/4901777300521/
+INSERT INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time)
+SELECT '711-COF-4901777300521', 'サントリー クラフトボス ブラック 500ml', '4901777300521', 0, 0, 7, 10, NOW()
+WHERE NOT EXISTS (SELECT 1 FROM product WHERE barcode = '4901777300521' OR sku_code = '711-COF-4901777300521');
+
+-- https://products.suntory.co.jp/d/4901777446434/
+INSERT INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time)
+SELECT '711-COF-4901777446434', 'サントリー クラフトボス ミルクラテ 500ml', '4901777446434', 0, 0, 7, 10, NOW()
+WHERE NOT EXISTS (SELECT 1 FROM product WHERE barcode = '4901777446434' OR sku_code = '711-COF-4901777446434');
+
+-- https://products.suntory.co.jp/d/4901777391543/
+INSERT INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time)
+SELECT '711-COF-4901777391543', 'サントリー クラフトボス 甘くないイタリアーノ 500ml', '4901777391543', 0, 0, 7, 10, NOW()
+WHERE NOT EXISTS (SELECT 1 FROM product WHERE barcode = '4901777391543' OR sku_code = '711-COF-4901777391543');
+
+-- https://www.komeri.com/shop/g/g2427382/
+INSERT INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time)
+SELECT '711-COF-4902102157810', 'コカ・コーラ ジョージア ブラック 500ml', '4902102157810', 0, 0, 7, 10, NOW()
+WHERE NOT EXISTS (SELECT 1 FROM product WHERE barcode = '4902102157810' OR sku_code = '711-COF-4902102157810');
+
+-- https://marueisyouji.co.jp/ja/products/4902102157612
+INSERT INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time)
+SELECT '711-COF-4902102157612', 'コカ・コーラ ジョージア カフェラテ 500ml', '4902102157612', 0, 0, 7, 10, NOW()
+WHERE NOT EXISTS (SELECT 1 FROM product WHERE barcode = '4902102157612' OR sku_code = '711-COF-4902102157612');
+
+-- https://store.shopping.yahoo.co.jp/tech-in/4901777430167-24.html
+INSERT INTO product (sku_code, name, barcode, stock, daily_usage, lead_time_days, safety_stock, create_time)
+SELECT '711-COF-4901777430167', 'スターバックス GRAB&GO ホワイトモカ 500ml', '4901777430167', 0, 0, 7, 10, NOW()
+WHERE NOT EXISTS (SELECT 1 FROM product WHERE barcode = '4901777430167' OR sku_code = '711-COF-4901777430167');
